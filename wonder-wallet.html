@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Wonder Wallet 💛</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #4A90E2;
+    --blue-dark: #3a7bc8;
+    --blue-shadow: rgba(74,144,226,0.35);
+    --mint: #3ED598;
+    --mint-dark: #2dbd85;
+    --mint-shadow: rgba(62,213,152,0.35);
+    --yellow: #FFD166;
+    --yellow-dark: #f0bc4a;
+    --yellow-shadow: rgba(255,209,102,0.4);
+    --coral: #FF6B6B;
+    --coral-dark: #e85555;
+    --coral-shadow: rgba(255,107,107,0.35);
+    --bg: #F7F9FC;
+    --text: #4A4A4A;
+    --white: #ffffff;
+    --card-radius: 28px;
+    --btn-radius: 50px;
+    --font-main: 'Nunito', sans-serif;
+    --font-display: 'Fredoka One', cursive;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: var(--font-main);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(74,144,226,0.07) 0%, transparent 50%),
+      radial-gradient(circle at 90% 80%, rgba(62,213,152,0.07) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, rgba(255,209,102,0.05) 0%, transparent 60%);
+  }
+
+  /* ── ATM SHELL ────────────────────────────────────── */
+  .atm-shell {
+    max-width: 420px;
+    margin: 0 auto;
+    min-height: 100vh;
+    position: relative;
+    background: linear-gradient(180deg, #e8eef7 0%, #f7f9fc 100%);
+    box-shadow: 0 0 60px rgba(0,0,0,0.12);
+  }
+
+  /* top bezel */
+  .atm-header {
+    background: linear-gradient(135deg, #2c5f9e 0%, #4A90E2 60%, #5ba3f0 100%);
+    padding: 18px 24px 22px;
+    position: relative;
+    border-bottom: 4px solid rgba(255,255,255,0.2);
+    box-shadow: 0 4px 20px rgba(44,95,158,0.4);
+  }
+
+  .atm-header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0; right: 0;
+    height: 8px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.08), transparent);
+  }
+
+  .logo-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-icon {
+    width: 42px; height: 42px;
+    background: var(--yellow);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2), inset 0 1px 2px rgba(255,255,255,0.5);
+  }
+
+  .logo-text {
+    font-family: var(--font-display);
+    font-size: 26px;
+    color: white;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    letter-spacing: 0.5px;
+  }
+
+  .logo-sub {
+    font-size: 11px;
+    color: rgba(255,255,255,0.75);
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-top: 1px;
+  }
+
+  /* screen area */
+  .atm-screen {
+    padding: 28px 20px 100px;
+    min-height: calc(100vh - 88px);
+    position: relative;
+  }
+
+  /* ── PAGES ────────────────────────────────────────── */
+  .page { display: none; animation: fadeUp 0.35s ease; }
+  .page.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── WHO SCREEN ───────────────────────────────────── */
+  .who-title {
+    font-family: var(--font-display);
+    font-size: 30px;
+    color: var(--blue);
+    text-align: center;
+    margin-bottom: 8px;
+    margin-top: 10px;
+  }
+
+  .who-sub {
+    text-align: center;
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 32px;
+    font-weight: 600;
+  }
+
+  .avatar-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .avatar-btn {
+    background: white;
+    border: 4px solid var(--blue);
+    border-radius: 28px;
+    padding: 28px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.12s;
+    box-shadow: 0 6px 0 var(--blue-dark), 0 8px 20px var(--blue-shadow);
+    position: relative;
+    top: 0;
+  }
+
+  .avatar-btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 var(--blue-dark), 0 4px 12px var(--blue-shadow);
+    top: 4px;
+  }
+
+  .avatar-btn.mint-btn {
+    border-color: var(--mint);
+    box-shadow: 0 6px 0 var(--mint-dark), 0 8px 20px var(--mint-shadow);
+  }
+
+  .avatar-btn.mint-btn:active {
+    box-shadow: 0 2px 0 var(--mint-dark), 0 4px 12px var(--mint-shadow);
+  }
+
+  .avatar-emoji { font-size: 56px; display: block; margin-bottom: 12px; }
+  .avatar-name {
+    font-family: var(--font-display);
+    font-size: 24px;
+    color: var(--text);
+  }
+
+  /* ── HOME SCREEN ──────────────────────────────────── */
+  .greeting-card {
+    background: linear-gradient(135deg, var(--blue) 0%, #5ba3f0 100%);
+    border-radius: var(--card-radius);
+    padding: 24px 24px 28px;
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 24px var(--blue-shadow);
+  }
+
+  .greeting-card::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 120px; height: 120px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+  }
+
+  .greeting-card::after {
+    content: '';
+    position: absolute;
+    bottom: -20px; left: 40px;
+    width: 80px; height: 80px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 50%;
+  }
+
+  .greeting-hey {
+    font-size: 14px;
+    color: rgba(255,255,255,0.8);
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .greeting-name {
+    font-family: var(--font-display);
+    font-size: 38px;
+    color: white;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    line-height: 1.1;
+  }
+
+  .balance-preview {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 16px;
+    padding: 12px 16px;
+    backdrop-filter: blur(4px);
+  }
+
+  .balance-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.8);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  .balance-amount-preview {
+    font-family: var(--font-display);
+    font-size: 28px;
+    color: var(--yellow);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+
+  .sb-icon { font-size: 18px; }
+
+  /* big action buttons */
+  .action-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  .action-btn {
+    border: none;
+    border-radius: 24px;
+    padding: 28px 16px 22px;
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-size: 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    top: 0;
+    transition: transform 0.1s, top 0.1s, box-shadow 0.1s;
+    letter-spacing: 0.3px;
+  }
+
+  .action-btn .btn-icon { font-size: 38px; }
+
+  .btn-earn {
+    background: linear-gradient(135deg, var(--mint) 0%, #56e6ac 100%);
+    color: white;
+    box-shadow: 0 7px 0 var(--mint-dark), 0 10px 24px var(--mint-shadow);
+    text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+
+  .btn-earn:active {
+    top: 5px;
+    box-shadow: 0 2px 0 var(--mint-dark), 0 4px 12px var(--mint-shadow);
+  }
+
+  .btn-spend {
+    background: linear-gradient(135deg, var(--coral) 0%, #ff8585 100%);
+    color: white;
+    box-shadow: 0 7px 0 var(--coral-dark), 0 10px 24px var(--coral-shadow);
+    text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+
+  .btn-spend:active {
+    top: 5px;
+    box-shadow: 0 2px 0 var(--coral-dark), 0 4px 12px var(--coral-shadow);
+  }
+
+  .btn-balance {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, var(--yellow) 0%, #ffe08a 100%);
+    color: var(--text);
+    box-shadow: 0 7px 0 var(--yellow-dark), 0 10px 24px var(--yellow-shadow);
+    padding: 22px 24px;
+    flex-direction: row;
+    font-size: 20px;
+    justify-content: center;
+    gap: 14px;
+  }
+
+  .btn-balance:active {
+    top: 5px;
+    box-shadow: 0 2px 0 var(--yellow-dark), 0 4px 12px var(--yellow-shadow);
+  }
+
+  /* ── ACTIVITY LIST ────────────────────────────────── */
+  .page-title-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .back-btn {
+    width: 44px; height: 44px;
+    background: white;
+    border: 3px solid var(--blue);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 4px 0 var(--blue-dark);
+    flex-shrink: 0;
+    transition: transform 0.1s, box-shadow 0.1s;
+    position: relative; top: 0;
+  }
+
+  .back-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--blue-dark); top: 3px; }
+
+  .page-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .section-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .badge-earn { background: rgba(62,213,152,0.15); color: var(--mint-dark); }
+  .badge-spend { background: rgba(255,107,107,0.12); color: var(--coral-dark); }
+
+  .activity-list { display: flex; flex-direction: column; gap: 12px; }
+
+  .activity-card {
+    background: white;
+    border-radius: 20px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+    position: relative;
+    top: 0;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.08), 0 6px 18px rgba(0,0,0,0.06);
+    border: 2.5px solid transparent;
+  }
+
+  .activity-card.earn-card { border-color: rgba(62,213,152,0.3); }
+  .activity-card.spend-card { border-color: rgba(255,107,107,0.3); }
+
+  .activity-card:active {
+    transform: scale(0.97);
+    box-shadow: 0 1px 0 rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.06);
+    top: 2px;
+  }
+
+  .act-emoji {
+    width: 52px; height: 52px;
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    flex-shrink: 0;
+  }
+
+  .earn-card .act-emoji { background: rgba(62,213,152,0.15); }
+  .spend-card .act-emoji { background: rgba(255,107,107,0.1); }
+
+  .act-info { flex: 1; }
+  .act-name {
+    font-weight: 800;
+    font-size: 16px;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .act-desc {
+    font-size: 12px;
+    color: #999;
+    font-weight: 600;
+    margin-top: 2px;
+  }
+
+  .act-value {
+    font-family: var(--font-display);
+    font-size: 22px;
+  }
+
+  .earn-value { color: var(--mint-dark); }
+  .spend-value { color: var(--coral); }
+
+  /* ── BALANCE PAGE ─────────────────────────────────── */
+  .balance-hero {
+    background: linear-gradient(135deg, #fffbe6 0%, #fff3c4 100%);
+    border: 3px solid var(--yellow);
+    border-radius: var(--card-radius);
+    padding: 32px 24px;
+    text-align: center;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 24px var(--yellow-shadow);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .balance-hero::before {
+    content: '🪙';
+    position: absolute;
+    font-size: 100px;
+    top: -10px; right: -10px;
+    opacity: 0.08;
+  }
+
+  .balance-label-big {
+    font-size: 13px;
+    color: #999;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .balance-number {
+    font-family: var(--font-display);
+    font-size: 72px;
+    color: var(--yellow-dark);
+    line-height: 1;
+    text-shadow: 0 3px 0 rgba(0,0,0,0.08);
+  }
+
+  .balance-unit {
+    font-family: var(--font-display);
+    font-size: 24px;
+    color: #c9a400;
+    margin-top: 4px;
+  }
+
+  .txn-section-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    color: var(--text);
+    margin-bottom: 14px;
+  }
+
+  .txn-table {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.07);
+  }
+
+  .txn-row {
+    display: flex;
+    align-items: center;
+    padding: 14px 18px;
+    gap: 12px;
+    border-bottom: 1.5px solid #f0f2f5;
+    transition: background 0.1s;
+  }
+
+  .txn-row:last-child { border-bottom: none; }
+  .txn-row:active { background: #f7f9fc; }
+
+  .txn-dot {
+    width: 36px; height: 36px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .txn-dot.earn-dot { background: rgba(62,213,152,0.15); }
+  .txn-dot.spend-dot { background: rgba(255,107,107,0.1); }
+
+  .txn-info { flex: 1; }
+  .txn-name { font-weight: 800; font-size: 14px; }
+  .txn-date { font-size: 11px; color: #aaa; font-weight: 600; margin-top: 1px; }
+
+  .txn-amount {
+    font-family: var(--font-display);
+    font-size: 18px;
+  }
+
+  .txn-earn { color: var(--mint-dark); }
+  .txn-spend { color: var(--coral); }
+
+  .no-txn {
+    text-align: center;
+    padding: 40px 20px;
+    color: #bbb;
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  /* ── TOAST ────────────────────────────────────────── */
+  .toast {
+    position: fixed;
+    top: 100px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: white;
+    border-radius: 20px;
+    padding: 16px 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s;
+    border: 3px solid var(--mint);
+    min-width: 240px;
+    max-width: 340px;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .toast-icon { font-size: 28px; }
+  .toast-text { font-weight: 800; font-size: 16px; color: var(--text); }
+  .toast-sub { font-size: 12px; color: #aaa; font-weight: 600; }
+
+  /* ── PIN MODAL ────────────────────────────────────── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(30,40,60,0.6);
+    z-index: 500;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.2s ease;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal-overlay.show { display: flex; }
+
+  .modal-card {
+    background: white;
+    border-radius: 32px;
+    padding: 32px 28px;
+    width: 88%;
+    max-width: 360px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes popIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+  }
+
+  .modal-title {
+    font-family: var(--font-display);
+    font-size: 26px;
+    text-align: center;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .modal-sub {
+    text-align: center;
+    font-size: 13px;
+    color: #aaa;
+    font-weight: 600;
+    margin-bottom: 24px;
+  }
+
+  .pin-dots {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+
+  .pin-dot {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: #e8eef7;
+    border: 2px solid #d0d8e8;
+    transition: background 0.15s, border-color 0.15s;
+  }
+
+  .pin-dot.filled { background: var(--blue); border-color: var(--blue); }
+  .pin-dot.error  { background: var(--coral); border-color: var(--coral-dark); }
+
+  .pin-keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .pin-key {
+    background: var(--bg);
+    border: 2.5px solid #e0e6f0;
+    border-radius: 16px;
+    padding: 16px 8px;
+    font-family: var(--font-display);
+    font-size: 22px;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.1s, transform 0.1s;
+    box-shadow: 0 3px 0 #d0d8e8;
+    position: relative;
+    top: 0;
+    color: var(--text);
+  }
+
+  .pin-key:active { transform: translateY(2px); box-shadow: 0 1px 0 #d0d8e8; top: 2px; }
+  .pin-key.del-key { font-size: 18px; }
+  .pin-key.cancel-key { background: rgba(255,107,107,0.1); border-color: rgba(255,107,107,0.3); color: var(--coral); }
+
+  /* ── BANKER PAGE ──────────────────────────────────── */
+  .banker-section {
+    margin-bottom: 24px;
+  }
+
+  .banker-section-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    color: var(--text);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .activity-edit-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.07);
+    margin-bottom: 12px;
+  }
+
+  .edit-row {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    gap: 12px;
+    border-bottom: 1.5px solid #f0f2f5;
+  }
+
+  .edit-row:last-child { border-bottom: none; }
+  .edit-emoji { font-size: 22px; width: 30px; text-align: center; }
+  .edit-name { flex: 1; font-weight: 700; font-size: 14px; }
+  .edit-val { font-family: var(--font-display); font-size: 18px; color: var(--blue); min-width: 48px; text-align: right; }
+
+  .edit-actions { display: flex; gap: 6px; }
+
+  .edit-btn {
+    width: 32px; height: 32px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    transition: opacity 0.15s;
+  }
+
+  .edit-btn:active { opacity: 0.7; }
+  .edit-btn-edit { background: rgba(74,144,226,0.12); color: var(--blue); }
+  .edit-btn-del  { background: rgba(255,107,107,0.12); color: var(--coral); }
+
+  .add-activity-btn {
+    width: 100%;
+    padding: 16px;
+    background: white;
+    border: 2.5px dashed var(--blue);
+    border-radius: 16px;
+    color: var(--blue);
+    font-family: var(--font-main);
+    font-weight: 800;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.15s;
+  }
+
+  .add-activity-btn:active { background: rgba(74,144,226,0.06); }
+
+  /* edit activity modal form */
+  .form-group { margin-bottom: 16px; }
+  .form-label { font-size: 12px; font-weight: 800; color: #999; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 6px; display: block; }
+
+  .form-input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2.5px solid #e0e6f0;
+    border-radius: 14px;
+    font-family: var(--font-main);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .form-input:focus { border-color: var(--blue); }
+
+  .modal-btn-row { display: flex; gap: 10px; margin-top: 20px; }
+
+  .modal-btn {
+    flex: 1;
+    padding: 16px;
+    border: none;
+    border-radius: 16px;
+    font-family: var(--font-display);
+    font-size: 18px;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+    position: relative; top: 0;
+  }
+
+  .modal-btn-primary {
+    background: var(--blue);
+    color: white;
+    box-shadow: 0 5px 0 var(--blue-dark);
+  }
+
+  .modal-btn-primary:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--blue-dark); top: 3px; }
+
+  .modal-btn-cancel {
+    background: #f0f2f5;
+    color: #aaa;
+    box-shadow: 0 5px 0 #d8dce4;
+  }
+
+  .modal-btn-cancel:active { transform: translateY(3px); box-shadow: 0 2px 0 #d8dce4; top: 3px; }
+
+  /* ── FLOATING ACTION BUTTONS ─────────────────────── */
+  .fab-wrapper {
+    position: absolute;
+    bottom: 28px;
+    z-index: 100;
+  }
+
+  .fab-right { right: 20px; }
+  .fab-left  { left: 20px; }
+
+  .banker-fab-inner {
+    width: 52px; height: 52px;
+    background: var(--coral);
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 5px 0 var(--coral-dark), 0 8px 20px var(--coral-shadow);
+    cursor: pointer;
+    font-size: 20px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; top: 0;
+    transition: transform 0.1s, box-shadow 0.1s, top 0.1s;
+  }
+
+  .banker-fab-inner:active { transform: scale(0.94); top: 3px; box-shadow: 0 2px 0 var(--coral-dark); }
+
+  .home-fab-inner {
+    width: 52px; height: 52px;
+    background: var(--mint);
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 5px 0 var(--mint-dark), 0 8px 20px var(--mint-shadow);
+    cursor: pointer;
+    font-size: 20px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; top: 0;
+    transition: transform 0.1s, box-shadow 0.1s, top 0.1s;
+  }
+
+  .home-fab-inner:active { transform: scale(0.94); top: 3px; box-shadow: 0 2px 0 var(--mint-dark); }
+
+  /* confetti burst */
+  .confetti-container {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  .confetti-piece {
+    position: absolute;
+    width: 10px; height: 10px;
+    border-radius: 3px;
+    animation: confettiFall 1s ease-out forwards;
+    opacity: 0;
+  }
+
+  @keyframes confettiFall {
+    0%   { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+    100% { transform: translateY(200px) rotate(720deg) scale(0.3); opacity: 0; }
+  }
+
+  /* shimmer on balance */
+  @keyframes shimmer {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  .balance-animating { animation: shimmer 0.4s ease 3; }
+
+  /* responsive for tiny screens */
+  @media (max-width: 380px) {
+    .greeting-name { font-size: 30px; }
+    .action-btn { padding: 22px 12px 18px; }
+    .action-btn .btn-icon { font-size: 32px; }
+    .action-btn { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="atm-shell" id="atmShell">
+
+  <!-- ATM HEADER -->
+  <div class="atm-header">
+    <div class="logo-row">
+      <div class="logo-icon">💛</div>
+      <div>
+        <div class="logo-text">Wonder Wallet</div>
+        <div class="logo-sub">Summer Bucks Bank</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN AREA -->
+  <div class="atm-screen" id="atmScreen">
+
+    <!-- PAGE: WHO -->
+    <div class="page active" id="page-who">
+      <div style="text-align:center; font-size:52px; margin-top:10px; margin-bottom:12px;">🏦</div>
+      <div class="who-title">Whose Wallet? 👀</div>
+      <div class="who-sub">Tap your card to get started!</div>
+      <div class="avatar-grid">
+        <button class="avatar-btn" onclick="selectKid('Lily')">
+          <span class="avatar-emoji">🦋</span>
+          <span class="avatar-name">Lily</span>
+        </button>
+        <button class="avatar-btn mint-btn" onclick="selectKid('Oliver')">
+          <span class="avatar-emoji">🦁</span>
+          <span class="avatar-name">Oliver</span>
+        </button>
+      </div>
+      <div class="fab-wrapper fab-right">
+        <button class="banker-fab-inner" onclick="showPinModal()">🔒</button>
+      </div>
+    </div>
+
+    <!-- PAGE: HOME -->
+    <div class="page" id="page-home">
+      <div class="greeting-card">
+        <div class="greeting-hey">Welcome back,</div>
+        <div class="greeting-name" id="greetingName">Lily!</div>
+        <div class="balance-preview">
+          <span class="sb-icon">🪙</span>
+          <div>
+            <div class="balance-label">Summer Bucks</div>
+            <div class="balance-amount-preview" id="balancePreview">0</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-grid">
+        <button class="action-btn btn-earn" onclick="navigate('earn')">
+          <span class="btn-icon">⭐</span>
+          Earn
+        </button>
+        <button class="action-btn btn-spend" onclick="navigate('spend')">
+          <span class="btn-icon">🛍️</span>
+          Spend
+        </button>
+        <button class="action-btn btn-balance" onclick="navigate('balance')">
+          <span class="btn-icon">📊</span>
+          Check Balance
+        </button>
+      </div>
+
+      <div class="fab-wrapper fab-left">
+        <button class="home-fab-inner" onclick="goHome()">🏠</button>
+      </div>
+      <div class="fab-wrapper fab-right">
+        <button class="banker-fab-inner" onclick="showPinModal()">🔒</button>
+      </div>
+    </div>
+
+    <!-- PAGE: EARN -->
+    <div class="page" id="page-earn">
+      <div class="page-title-row">
+        <button class="back-btn" onclick="navigate('home')">←</button>
+        <div class="page-title">Earn Bucks! ⭐</div>
+      </div>
+      <span class="section-badge badge-earn">✨ Pick an activity to earn</span>
+      <div class="activity-list" id="earnList"></div>
+    </div>
+
+    <!-- PAGE: SPEND -->
+    <div class="page" id="page-spend">
+      <div class="page-title-row">
+        <button class="back-btn" onclick="navigate('home')">←</button>
+        <div class="page-title">Spend Bucks! 🛍️</div>
+      </div>
+      <span class="section-badge badge-spend">🎯 Pick something fun</span>
+      <div class="activity-list" id="spendList"></div>
+    </div>
+
+    <!-- PAGE: BALANCE -->
+    <div class="page" id="page-balance">
+      <div class="page-title-row">
+        <button class="back-btn" onclick="navigate('home')">←</button>
+        <div class="page-title">Your Balance 💰</div>
+      </div>
+      <div class="balance-hero">
+        <div class="balance-label-big">Summer Bucks</div>
+        <div class="balance-number" id="bigBalance">0</div>
+        <div class="balance-unit">Summer Bucks 🌟</div>
+      </div>
+      <div class="txn-section-title">Recent Transactions</div>
+      <div class="txn-table" id="txnTable">
+        <div class="no-txn">No transactions yet!<br>Go earn some bucks 🌟</div>
+      </div>
+    </div>
+
+    <!-- PAGE: BANKER -->
+    <div class="page" id="page-banker">
+      <div class="page-title-row">
+        <button class="back-btn" onclick="navigate('home')">←</button>
+        <div class="page-title">🏦 Banker Panel</div>
+      </div>
+
+      <div class="banker-section">
+        <div class="banker-section-title">⭐ Earn Activities</div>
+        <div id="earnEditList"></div>
+        <button class="add-activity-btn" onclick="openAddActivity('earn')">＋ Add Earn Activity</button>
+      </div>
+
+      <div class="banker-section">
+        <div class="banker-section-title">🛍️ Spend Activities</div>
+        <div id="spendEditList"></div>
+        <button class="add-activity-btn" onclick="openAddActivity('spend')">＋ Add Spend Activity</button>
+      </div>
+    </div>
+
+  </div><!-- /atm-screen -->
+</div><!-- /atm-shell -->
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toastIcon">✅</span>
+  <div>
+    <div class="toast-text" id="toastText">Transaction Confirmed!</div>
+    <div class="toast-sub" id="toastSub">Balance updated</div>
+  </div>
+</div>
+
+<!-- PIN MODAL -->
+<div class="modal-overlay" id="pinModal">
+  <div class="modal-card">
+    <div style="text-align:center;font-size:38px;margin-bottom:8px;">🔐</div>
+    <div class="modal-title">Banker Access</div>
+    <div class="modal-sub">Enter your 4-digit PIN</div>
+    <div class="pin-dots" id="pinDots">
+      <div class="pin-dot" id="d0"></div>
+      <div class="pin-dot" id="d1"></div>
+      <div class="pin-dot" id="d2"></div>
+      <div class="pin-dot" id="d3"></div>
+    </div>
+    <div class="pin-keypad">
+      <button class="pin-key" onclick="pinPress('1')">1</button>
+      <button class="pin-key" onclick="pinPress('2')">2</button>
+      <button class="pin-key" onclick="pinPress('3')">3</button>
+      <button class="pin-key" onclick="pinPress('4')">4</button>
+      <button class="pin-key" onclick="pinPress('5')">5</button>
+      <button class="pin-key" onclick="pinPress('6')">6</button>
+      <button class="pin-key" onclick="pinPress('7')">7</button>
+      <button class="pin-key" onclick="pinPress('8')">8</button>
+      <button class="pin-key" onclick="pinPress('9')">9</button>
+      <button class="pin-key cancel-key" onclick="closePinModal()">✕</button>
+      <button class="pin-key" onclick="pinPress('0')">0</button>
+      <button class="pin-key del-key" onclick="pinDel()">⌫</button>
+    </div>
+  </div>
+</div>
+
+<!-- ACTIVITY EDIT MODAL -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal-card">
+    <div class="modal-title" id="editModalTitle">Add Activity</div>
+    <div class="modal-sub" id="editModalSub">Fill in the details</div>
+    <div class="form-group">
+      <label class="form-label">Emoji</label>
+      <input class="form-input" id="editEmoji" type="text" maxlength="2" placeholder="🌟">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Activity Name</label>
+      <input class="form-input" id="editName" type="text" placeholder="e.g. Go for a bike ride">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Summer Bucks Value</label>
+      <input class="form-input" id="editValue" type="number" min="1" placeholder="e.g. 10">
+    </div>
+    <div class="modal-btn-row">
+      <button class="modal-btn modal-btn-cancel" onclick="closeEditModal()">Cancel</button>
+      <button class="modal-btn modal-btn-primary" onclick="saveActivity()">Save ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFETTI -->
+<div class="confetti-container" id="confettiContainer"></div>
+
+<script>
+// ─── CONFIG — PASTE YOUR WEB APP URL HERE ───────────────────────────────────
+const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycby_3aI2NguqL5jDbECY9aT3nFSG9aAdGppn-ual1z054V-QJfi10Nnk6rP2ttZQhuc0QA/exec'; // ← e.g. 'https://script.google.com/macros/s/ABC123.../exec'
+
+// ─── CONSTANTS ───────────────────────────────────────────────────────────────
+const STORAGE_KEY = 'wonderWallet_activities_v1';
+const PIN = '1228';
+
+// ─── ACTIVITIES (stored locally — managed from Banker panel) ─────────────────
+const DEFAULT_ACTIVITIES = {
+  earnActivities: [
+    { id: 'e1', emoji: '📚', name: 'Read for 20 minutes',      value: 10 },
+    { id: 'e2', emoji: '🚴', name: 'Go for a bike ride',       value: 15 },
+    { id: 'e3', emoji: '🎨', name: 'Art & craft project',      value: 12 },
+    { id: 'e4', emoji: '🌿', name: 'Help in the garden',       value: 10 },
+    { id: 'e5', emoji: '🧹', name: 'Clean your room',          value: 8  },
+    { id: 'e6', emoji: '🏊', name: 'Swim at the pool',         value: 15 },
+    { id: 'e7', emoji: '🎭', name: 'Imaginative play (30min)', value: 10 },
+    { id: 'e8', emoji: '🧩', name: 'Do a puzzle',              value: 8  },
+    { id: 'e9', emoji: '🌳', name: 'Play outside (1 hour)',    value: 20 },
+  ],
+  spendActivities: [
+    { id: 's1', emoji: '📱', name: '30 min Screen Time',    value: 20 },
+    { id: 's2', emoji: '🎮', name: '1 Hour Video Games',    value: 35 },
+    { id: 's3', emoji: '🍦', name: 'Ice Cream Treat',       value: 25 },
+    { id: 's4', emoji: '🎬', name: 'Movie Night Pick',      value: 40 },
+    { id: 's5', emoji: '🎳', name: 'Bowling Trip',          value: 60 },
+    { id: 's6', emoji: '🎁', name: 'Small Toy ($5)',        value: 50 },
+    { id: 's7', emoji: '🕹️', name: 'Extra 30 min bedtime',  value: 30 },
+  ]
+};
+
+function loadActivities() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return JSON.parse(JSON.stringify(DEFAULT_ACTIVITIES));
+    return JSON.parse(raw);
+  } catch(e) {
+    return JSON.parse(JSON.stringify(DEFAULT_ACTIVITIES));
+  }
+}
+
+function saveActivities() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({
+    earnActivities: appData.earnActivities,
+    spendActivities: appData.spendActivities
+  }));
+}
+
+// ─── APP STATE ────────────────────────────────────────────────────────────────
+const activities = loadActivities();
+let appData = {
+  ...activities,
+  kids: {
+    Lily:   { balance: 0, transactions: [] },
+    Oliver: { balance: 0, transactions: [] }
+  }
+};
+
+let currentKid = null;
+let pinBuffer = '';
+let editingActivity = null;
+
+// ─── LOADING UI ───────────────────────────────────────────────────────────────
+function showLoading(containerId, message = 'Loading...') {
+  const el = document.getElementById(containerId);
+  if (el) el.innerHTML = `
+    <div style="text-align:center;padding:40px 20px;">
+      <div style="font-size:36px;margin-bottom:12px;animation:spin 1s linear infinite;display:inline-block;">⏳</div>
+      <div style="font-weight:800;color:#aaa;font-size:14px;">${message}</div>
+    </div>`;
+}
+
+// ─── GOOGLE SHEETS API ────────────────────────────────────────────────────────
+// All reads and writes go through a single Apps Script Web App.
+// The action parameter tells the script what to do.
+
+async function sheetsRequest(payload) {
+  if (!GOOGLE_SHEET_URL) return null;
+  try {
+    const res = await fetch(GOOGLE_SHEET_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    // no-cors means we can't read the response body directly.
+    // We use a GET with a query param for reads instead.
+    return true;
+  } catch(e) {
+    console.warn('Sheets request failed:', e);
+    return null;
+  }
+}
+
+async function sheetsGet(params) {
+  if (!GOOGLE_SHEET_URL) return null;
+  try {
+    const url = new URL(GOOGLE_SHEET_URL);
+    Object.entries(params).forEach(([k,v]) => url.searchParams.set(k, v));
+    const res = await fetch(url.toString());
+    return await res.json();
+  } catch(e) {
+    console.warn('Sheets GET failed:', e);
+    return null;
+  }
+}
+
+// Fetch balance + last 10 transactions for a child from Google Sheets
+async function fetchKidData(childName) {
+  const data = await sheetsGet({ action: 'getKidData', child: childName });
+  if (!data) return null;
+  return data; // { balance: number, transactions: [...] }
+}
+
+// Append a transaction row to Google Sheets
+async function appendTransaction(txn) {
+  await sheetsRequest({
+    action: 'appendTransaction',
+    Date: new Date(txn.date).toLocaleString(),
+    Child: txn.child,
+    Type: txn.type,
+    Activity: txn.name,
+    Emoji: txn.emoji,
+    Value: txn.type === 'earn' ? txn.value : -txn.value,
+    Balance: txn.balanceAfter
+  });
+}
+
+// ─── ROUTING ─────────────────────────────────────────────────────────────────
+function init() {
+  const params = new URLSearchParams(window.location.search);
+  const kid = params.get('kid');
+  if (kid === 'Lily' || kid === 'Oliver') {
+    selectKid(kid);
+  } else {
+    navigate('who');
+  }
+}
+
+async function selectKid(name) {
+  currentKid = name;
+  document.getElementById('greetingName').textContent = name + '!';
+  document.getElementById('balancePreview').textContent = '...';
+  navigate('home');
+
+  // Fetch live balance from Google Sheets
+  if (GOOGLE_SHEET_URL) {
+    const data = await fetchKidData(name);
+    if (data) {
+      appData.kids[name].balance = data.balance;
+      appData.kids[name].transactions = data.transactions;
+    }
+  }
+  updateBalancePreview();
+}
+
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById('page-' + page);
+  if (target) {
+    target.classList.add('active');
+    document.getElementById('atmScreen').scrollTop = 0;
+  }
+  if (page === 'earn')    renderEarnList();
+  if (page === 'spend')   renderSpendList();
+  if (page === 'balance') renderBalancePage();
+  if (page === 'banker')  renderBankerPanel();
+}
+
+// ─── BALANCE ──────────────────────────────────────────────────────────────────
+function getBalance() {
+  return appData.kids[currentKid]?.balance || 0;
+}
+
+function updateBalancePreview() {
+  document.getElementById('balancePreview').textContent = getBalance();
+}
+
+// ─── RENDER LISTS ─────────────────────────────────────────────────────────────
+function renderEarnList() {
+  const list = document.getElementById('earnList');
+  list.innerHTML = appData.earnActivities.map(act => `
+    <div class="activity-card earn-card" onclick="doActivity('earn','${act.id}')">
+      <div class="act-emoji">${act.emoji}</div>
+      <div class="act-info">
+        <div class="act-name">${act.name}</div>
+        <div class="act-desc">Tap to earn these bucks!</div>
+      </div>
+      <div class="act-value earn-value">+${act.value}</div>
+    </div>
+  `).join('');
+}
+
+function renderSpendList() {
+  const list = document.getElementById('spendList');
+  const bal = getBalance();
+  list.innerHTML = appData.spendActivities.map(act => {
+    const canAfford = bal >= act.value;
+    return `
+    <div class="activity-card spend-card${canAfford ? '' : '" style="opacity:0.5;cursor:not-allowed'}"
+         onclick="${canAfford ? `doActivity('spend','${act.id}')` : 'insufficientFunds()'}">
+      <div class="act-emoji">${act.emoji}</div>
+      <div class="act-info">
+        <div class="act-name">${act.name}</div>
+        <div class="act-desc">${canAfford ? 'Tap to spend!' : 'Not enough bucks 😢'}</div>
+      </div>
+      <div class="act-value spend-value">-${act.value}</div>
+    </div>
+  `}).join('');
+}
+
+async function renderBalancePage() {
+  document.getElementById('bigBalance').textContent = '...';
+  const table = document.getElementById('txnTable');
+  table.innerHTML = `<div class="no-txn" style="padding:30px;">
+    <div style="font-size:30px;animation:spin 1s linear infinite;display:inline-block;margin-bottom:8px;">⏳</div>
+    <div>Loading transactions...</div>
+  </div>`;
+
+  // Always fetch fresh from Sheets when viewing balance
+  if (GOOGLE_SHEET_URL) {
+    const data = await fetchKidData(currentKid);
+    if (data) {
+      appData.kids[currentKid].balance = data.balance;
+      appData.kids[currentKid].transactions = data.transactions;
+      updateBalancePreview();
+    }
+  }
+
+  const bal = getBalance();
+  document.getElementById('bigBalance').textContent = bal;
+  document.getElementById('bigBalance').classList.add('balance-animating');
+  setTimeout(() => document.getElementById('bigBalance').classList.remove('balance-animating'), 800);
+
+  const txns = (appData.kids[currentKid]?.transactions || []).slice().reverse().slice(0, 10);
+  if (txns.length === 0) {
+    table.innerHTML = '<div class="no-txn">No transactions yet!<br>Go earn some bucks 🌟</div>';
+    return;
+  }
+  table.innerHTML = txns.map(t => {
+    const isEarn = t.type === 'earn';
+    return `
+    <div class="txn-row">
+      <div class="txn-dot ${isEarn ? 'earn-dot' : 'spend-dot'}">${t.emoji || (isEarn ? '⭐' : '🛍️')}</div>
+      <div class="txn-info">
+        <div class="txn-name">${t.name}</div>
+        <div class="txn-date">${formatDate(t.date)}</div>
+      </div>
+      <div class="txn-amount ${isEarn ? 'txn-earn' : 'txn-spend'}">${isEarn ? '+' : '-'}${t.value}</div>
+    </div>
+  `}).join('');
+}
+
+function formatDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+// ─── TRANSACTION ──────────────────────────────────────────────────────────────
+async function doActivity(type, id) {
+  const activities = type === 'earn' ? appData.earnActivities : appData.spendActivities;
+  const act = activities.find(a => a.id === id);
+  if (!act) return;
+
+  const kid = appData.kids[currentKid];
+  if (type === 'spend' && kid.balance < act.value) {
+    insufficientFunds();
+    return;
+  }
+
+  // Update local balance immediately so UI feels instant
+  if (type === 'earn') {
+    kid.balance += act.value;
+  } else {
+    kid.balance -= act.value;
+  }
+
+  const txn = {
+    id: Date.now().toString(),
+    type,
+    name: act.name,
+    emoji: act.emoji,
+    value: act.value,
+    date: new Date().toISOString(),
+    child: currentKid,
+    balanceAfter: kid.balance
+  };
+
+  kid.transactions.push(txn);
+  updateBalancePreview();
+
+  // Write to Google Sheets (non-blocking — UI doesn't wait)
+  appendTransaction(txn);
+
+  if (type === 'earn') {
+    showToast('🌟', 'Bucks Earned!', `+${act.value} Summer Bucks added!`);
+    confettiBurst();
+  } else {
+    showToast('🎉', 'Spent!', `-${act.value} Summer Bucks used`);
+  }
+
+  const bp = document.getElementById('balancePreview');
+  bp.textContent = kid.balance;
+  bp.classList.add('balance-animating');
+  setTimeout(() => bp.classList.remove('balance-animating'), 1500);
+
+  setTimeout(() => navigate('home'), 1800);
+}
+
+function insufficientFunds() {
+  showToast('😢', 'Not Enough Bucks!', 'Keep earning to unlock this!');
+}
+
+// ─── TOAST ───────────────────────────────────────────────────────────────────
+let toastTimer = null;
+function showToast(icon, text, sub) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastIcon').textContent = icon;
+  document.getElementById('toastText').textContent = text;
+  document.getElementById('toastSub').textContent = sub;
+  toast.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+// ─── CONFETTI ────────────────────────────────────────────────────────────────
+function confettiBurst() {
+  const container = document.getElementById('confettiContainer');
+  const colors = ['#FFD166','#3ED598','#4A90E2','#FF6B6B','#fff','#a78bfa'];
+  for (let i = 0; i < 30; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.cssText = `
+      left: ${20 + Math.random() * 60}%;
+      top: ${100 + Math.random() * 40}px;
+      background: ${colors[Math.floor(Math.random() * colors.length)]};
+      animation-delay: ${Math.random() * 0.4}s;
+      animation-duration: ${0.8 + Math.random() * 0.6}s;
+      transform: rotate(${Math.random() * 360}deg);
+      width: ${6 + Math.random() * 8}px;
+      height: ${6 + Math.random() * 8}px;
+    `;
+    container.appendChild(piece);
+    setTimeout(() => piece.remove(), 1500);
+  }
+}
+
+// ─── PIN MODAL ───────────────────────────────────────────────────────────────
+function showPinModal() {
+  pinBuffer = '';
+  updatePinDots();
+  document.getElementById('pinModal').classList.add('show');
+}
+
+function closePinModal() {
+  document.getElementById('pinModal').classList.remove('show');
+  pinBuffer = '';
+  updatePinDots();
+}
+
+function pinPress(digit) {
+  if (pinBuffer.length >= 4) return;
+  pinBuffer += digit;
+  updatePinDots();
+  if (pinBuffer.length === 4) {
+    setTimeout(checkPin, 200);
+  }
+}
+
+function pinDel() {
+  pinBuffer = pinBuffer.slice(0, -1);
+  updatePinDots();
+}
+
+function updatePinDots(state) {
+  for (let i = 0; i < 4; i++) {
+    const dot = document.getElementById('d' + i);
+    dot.className = 'pin-dot';
+    if (i < pinBuffer.length) dot.classList.add(state || 'filled');
+  }
+}
+
+function checkPin() {
+  if (pinBuffer === PIN) {
+    closePinModal();
+    navigate('banker');
+  } else {
+    updatePinDots('error');
+    setTimeout(() => {
+      pinBuffer = '';
+      updatePinDots();
+    }, 700);
+  }
+}
+
+// ─── BANKER PANEL ────────────────────────────────────────────────────────────
+function renderBankerPanel() {
+  renderEditList('earn');
+  renderEditList('spend');
+}
+
+function renderEditList(type) {
+  const activities = type === 'earn' ? appData.earnActivities : appData.spendActivities;
+  const container = document.getElementById(type + 'EditList');
+  if (activities.length === 0) {
+    container.innerHTML = '<div style="text-align:center;color:#bbb;padding:16px;font-weight:700;">No activities yet</div>';
+    return;
+  }
+  container.innerHTML = `
+    <div class="activity-edit-card">
+      ${activities.map(act => `
+        <div class="edit-row">
+          <span class="edit-emoji">${act.emoji}</span>
+          <span class="edit-name">${act.name}</span>
+          <span class="edit-val">${act.value}</span>
+          <div class="edit-actions">
+            <button class="edit-btn edit-btn-edit" onclick="openEditActivity('${type}','${act.id}')">✏️</button>
+            <button class="edit-btn edit-btn-del" onclick="deleteActivity('${type}','${act.id}')">🗑️</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function openAddActivity(type) {
+  editingActivity = { type, id: null };
+  document.getElementById('editModalTitle').textContent = type === 'earn' ? 'Add Earn Activity ⭐' : 'Add Spend Activity 🛍️';
+  document.getElementById('editModalSub').textContent = 'Fill in the details below';
+  document.getElementById('editEmoji').value = '';
+  document.getElementById('editName').value = '';
+  document.getElementById('editValue').value = '';
+  document.getElementById('editModal').classList.add('show');
+}
+
+function openEditActivity(type, id) {
+  const activities = type === 'earn' ? appData.earnActivities : appData.spendActivities;
+  const act = activities.find(a => a.id === id);
+  if (!act) return;
+  editingActivity = { type, id };
+  document.getElementById('editModalTitle').textContent = 'Edit Activity';
+  document.getElementById('editModalSub').textContent = 'Change the details below';
+  document.getElementById('editEmoji').value = act.emoji;
+  document.getElementById('editName').value = act.name;
+  document.getElementById('editValue').value = act.value;
+  document.getElementById('editModal').classList.add('show');
+}
+
+function closeEditModal() {
+  document.getElementById('editModal').classList.remove('show');
+  editingActivity = null;
+}
+
+function saveActivity() {
+  const emoji = document.getElementById('editEmoji').value.trim() || '⭐';
+  const name  = document.getElementById('editName').value.trim();
+  const value = parseInt(document.getElementById('editValue').value);
+
+  if (!name || isNaN(value) || value < 1) {
+    document.getElementById('editName').style.borderColor = '#FF6B6B';
+    setTimeout(() => document.getElementById('editName').style.borderColor = '', 1500);
+    return;
+  }
+
+  const { type, id } = editingActivity;
+  const list = type === 'earn' ? appData.earnActivities : appData.spendActivities;
+
+  if (id === null) {
+    list.push({ id: Date.now().toString(), emoji, name, value });
+  } else {
+    const act = list.find(a => a.id === id);
+    if (act) { act.emoji = emoji; act.name = name; act.value = value; }
+  }
+
+  saveActivities();
+  closeEditModal();
+  renderBankerPanel();
+}
+
+function deleteActivity(type, id) {
+  if (!confirm('Delete this activity?')) return;
+  if (type === 'earn') {
+    appData.earnActivities = appData.earnActivities.filter(a => a.id !== id);
+  } else {
+    appData.spendActivities = appData.spendActivities.filter(a => a.id !== id);
+  }
+  saveActivities();
+  renderBankerPanel();
+}
+
+// ─── HOME BUTTON ─────────────────────────────────────────────────────────────
+function goHome() {
+  currentKid = null;
+  navigate('who');
+}
+
+// ─── BOOT ────────────────────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
