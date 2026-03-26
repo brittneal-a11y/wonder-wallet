@@ -107,7 +107,34 @@
   .avatar-btn.mint-btn { border-color: var(--mint); box-shadow: 0 6px 0 var(--mint-dark), 0 8px 20px var(--mint-shadow); }
   .avatar-btn.mint-btn:active { box-shadow: 0 2px 0 var(--mint-dark), 0 4px 12px var(--mint-shadow); }
   .avatar-emoji { font-size: 56px; display: block; margin-bottom: 12px; }
-  .avatar-name { font-family: var(--font-display); font-size: 24px; color: var(--text); }
+  .avatar-name { font-family: var(--font-display); font-size: 24px; color: var(--text); margin-top: 12px; }
+
+  .avatar-img {
+    width: 110px;
+    height: 110px;
+    border-radius: 22px;
+    object-fit: cover;
+    object-position: top;
+    display: block;
+    margin: 0 auto;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+    transition: transform 0.15s;
+  }
+
+  .avatar-btn:active .avatar-img { transform: scale(0.95); }
+
+  /* small avatar on greeting card */
+  .greeting-avatar {
+    position: absolute;
+    top: 16px; right: 16px;
+    width: 64px; height: 64px;
+    border-radius: 16px;
+    object-fit: cover;
+    object-position: top;
+    border: 3px solid rgba(255,255,255,0.5);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    z-index: 2;
+  }
 
   /* ── HOME ── */
   .greeting-card {
@@ -408,11 +435,11 @@
       <div class="who-sub">Tap your card to get started!</div>
       <div class="avatar-grid">
         <button class="avatar-btn" onclick="selectKid('Lily')">
-          <span class="avatar-emoji">🦋</span>
+          <img class="avatar-img" src="Lily_Avatar.png" alt="Lily">
           <span class="avatar-name">Lily</span>
         </button>
         <button class="avatar-btn mint-btn" onclick="selectKid('Oliver')">
-          <span class="avatar-emoji">🦁</span>
+          <img class="avatar-img" src="Oliver_Avatar.png" alt="Oliver">
           <span class="avatar-name">Oliver</span>
         </button>
       </div>
@@ -424,6 +451,7 @@
     <!-- HOME -->
     <div class="page" id="page-home">
       <div class="greeting-card">
+        <img class="greeting-avatar" id="greetingAvatar" src="Lily_Avatar.png" alt="">
         <div class="greeting-hey">Welcome back,</div>
         <div class="greeting-name" id="greetingName">Lily!</div>
         <div class="balance-preview">
@@ -609,7 +637,7 @@
 
 <script>
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
-const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycby_3aI2NguqL5jDbECY9aT3nFSG9aAdGppn-ual1z054V-QJfi10Nnk6rP2ttZQhuc0QA/exec'; // ← e.g. 'https://script.google.com/macros/s/ABC123.../exec'; // ← PASTE YOUR APPS SCRIPT WEB APP URL HERE
+const GOOGLE_SHEET_URL = ''; // ← PASTE YOUR APPS SCRIPT WEB APP URL HERE
 const PIN = '1228';
 
 // ─── DEFAULTS (used on first load before Sheets responds) ─────────────────────
@@ -706,6 +734,10 @@ async function selectKid(name) {
   currentKid = name;
   document.getElementById('greetingName').textContent = name + '!';
   document.getElementById('balancePreview').textContent = '...';
+  // swap greeting card avatar
+  const avatarSrc = name === 'Lily' ? 'Lily_Avatar.png' : 'Oliver_Avatar.png';
+  document.getElementById('greetingAvatar').src = avatarSrc;
+  document.getElementById('greetingAvatar').alt = name;
   navigate('home');
   if (GOOGLE_SHEET_URL) {
     const data = await sheetsGet({ action: 'getKidData', child: name });
