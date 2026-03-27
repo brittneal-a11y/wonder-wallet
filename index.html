@@ -83,6 +83,7 @@
 
   .page { display: none; animation: fadeUp 0.35s ease; }
   .page.active { display: block; }
+  #page-who.active { display: flex; }
 
   @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -101,14 +102,14 @@
     background-color: #d6eaf8;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     padding: 0 20px;
     position: relative;
   }
 
   .who-content {
     padding: 0;
-    margin-top: -60px;
+    margin-top: 18%;
   }
 
   .who-title {
@@ -116,16 +117,16 @@
     font-size: 38px;
     color: white;
     text-align: center;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     text-shadow: 0 2px 12px rgba(0,0,0,0.25), 0 1px 3px rgba(0,0,0,0.3);
     letter-spacing: 0.5px;
   }
 
   .who-sub {
     text-align: center;
-    font-size: 14px;
+    font-size: 13px;
     color: rgba(255,255,255,0.9);
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     font-weight: 700;
     text-shadow: 0 1px 4px rgba(0,0,0,0.3);
   }
@@ -134,11 +135,12 @@
 
   .avatar-btn {
     background: rgba(255,255,255,0.92);
-    border: 3px solid var(--blue); border-radius: 22px;
-    padding: 12px 12px 14px; text-align: center; cursor: pointer;
+    border: 3px solid var(--blue); border-radius: 18px;
+    padding: 10px 8px 10px; text-align: center; cursor: pointer;
     box-shadow: 0 5px 0 var(--blue-dark), 0 8px 20px rgba(0,0,0,0.18);
     backdrop-filter: blur(8px);
     position: relative; top: 0; transition: transform 0.12s, box-shadow 0.12s;
+    display: flex; flex-direction: column; align-items: center;
   }
   .avatar-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--blue-dark), 0 2px 8px rgba(0,0,0,0.12); top: 4px; }
   .avatar-btn.mint-btn { border-color: var(--mint); box-shadow: 0 5px 0 var(--mint-dark), 0 8px 20px rgba(0,0,0,0.18); }
@@ -468,8 +470,8 @@
     <!-- WHO -->
     <div class="page active" id="page-who">
       <div class="who-content">
-        <div class="who-title">Welcome! 👋</div>
-        <div class="who-sub">Whose wallet is it today?</div>
+        <div class="who-title">Welcome!</div>
+        <div class="who-sub">Click your profile to get started</div>
         <div class="avatar-grid">
           <button class="avatar-btn" onclick="selectKid('Lily')">
             <img class="avatar-img" src="Lily_Avatar.png" alt="Lily">
@@ -675,7 +677,7 @@
 
 <script>
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
-const GOOGLE_SHEET_URL = ''; // ← PASTE YOUR APPS SCRIPT WEB APP URL HERE
+const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycby_3aI2NguqL5jDbECY9aT3nFSG9aAdGppn-ual1z054V-QJfi10Nnk6rP2ttZQhuc0QA/exec'; // ← ⚠️ PASTE YOUR APPS SCRIPT WEB APP URL HERE — without this nothing will save or load from Google Sheets
 const PIN = '1228';
 
 // ─── DEFAULTS (used on first load before Sheets responds) ─────────────────────
