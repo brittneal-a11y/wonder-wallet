@@ -93,19 +93,54 @@
   @keyframes confettiFall { 0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; } 100% { transform: translateY(200px) rotate(720deg) scale(0.3); opacity: 0; } }
 
   /* ── WHO ── */
-  .who-title { font-family: var(--font-display); font-size: 30px; color: var(--blue); text-align: center; margin-bottom: 8px; margin-top: 10px; }
-  .who-sub { text-align: center; font-size: 14px; color: #888; margin-bottom: 32px; font-weight: 600; }
+  #page-who {
+    padding: 0;
+    margin: -28px -20px -100px;
+    min-height: calc(100vh - 88px);
+    background: url('Wonder_Wallet_Watiting_room.png') center top / cover no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: 48px;
+    position: relative;
+  }
+
+  .who-content {
+    padding: 0 20px;
+  }
+
+  .who-title {
+    font-family: var(--font-display);
+    font-size: 38px;
+    color: white;
+    text-align: center;
+    margin-bottom: 6px;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.25), 0 1px 3px rgba(0,0,0,0.3);
+    letter-spacing: 0.5px;
+  }
+
+  .who-sub {
+    text-align: center;
+    font-size: 14px;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 24px;
+    font-weight: 700;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+
   .avatar-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
   .avatar-btn {
-    background: white; border: 4px solid var(--blue); border-radius: 28px;
-    padding: 28px 16px; text-align: center; cursor: pointer;
-    box-shadow: 0 6px 0 var(--blue-dark), 0 8px 20px var(--blue-shadow);
+    background: rgba(255,255,255,0.92);
+    border: 4px solid var(--blue); border-radius: 28px;
+    padding: 20px 16px; text-align: center; cursor: pointer;
+    box-shadow: 0 6px 0 var(--blue-dark), 0 8px 24px rgba(0,0,0,0.2);
+    backdrop-filter: blur(8px);
     position: relative; top: 0; transition: transform 0.12s, box-shadow 0.12s;
   }
-  .avatar-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--blue-dark), 0 4px 12px var(--blue-shadow); top: 4px; }
-  .avatar-btn.mint-btn { border-color: var(--mint); box-shadow: 0 6px 0 var(--mint-dark), 0 8px 20px var(--mint-shadow); }
-  .avatar-btn.mint-btn:active { box-shadow: 0 2px 0 var(--mint-dark), 0 4px 12px var(--mint-shadow); }
+  .avatar-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--blue-dark), 0 4px 12px rgba(0,0,0,0.15); top: 4px; }
+  .avatar-btn.mint-btn { border-color: var(--mint); box-shadow: 0 6px 0 var(--mint-dark), 0 8px 24px rgba(0,0,0,0.2); }
+  .avatar-btn.mint-btn:active { box-shadow: 0 2px 0 var(--mint-dark), 0 4px 12px rgba(0,0,0,0.15); }
   .avatar-emoji { font-size: 56px; display: block; margin-bottom: 12px; }
   .avatar-name { font-family: var(--font-display); font-size: 24px; color: var(--text); margin-top: 12px; }
 
@@ -421,7 +456,7 @@
       <div class="logo-icon">💛</div>
       <div>
         <div class="logo-text">Wonder Wallet</div>
-        <div class="logo-sub">Summer Bucks Bank</div>
+        <div class="logo-sub">Wonder Bucks Bank</div>
       </div>
     </div>
   </div>
@@ -430,18 +465,19 @@
 
     <!-- WHO -->
     <div class="page active" id="page-who">
-      <div style="text-align:center;font-size:52px;margin-top:10px;margin-bottom:12px;">🏦</div>
-      <div class="who-title">Whose Wallet? 👀</div>
-      <div class="who-sub">Tap your card to get started!</div>
-      <div class="avatar-grid">
-        <button class="avatar-btn" onclick="selectKid('Lily')">
-          <img class="avatar-img" src="Lily_Avatar.png" alt="Lily">
-          <span class="avatar-name">Lily</span>
-        </button>
-        <button class="avatar-btn mint-btn" onclick="selectKid('Oliver')">
-          <img class="avatar-img" src="Oliver_Avatar.png" alt="Oliver">
-          <span class="avatar-name">Oliver</span>
-        </button>
+      <div class="who-content">
+        <div class="who-title">Welcome! 👋</div>
+        <div class="who-sub">Whose wallet is it today?</div>
+        <div class="avatar-grid">
+          <button class="avatar-btn" onclick="selectKid('Lily')">
+            <img class="avatar-img" src="Lily_Avatar.png" alt="Lily">
+            <span class="avatar-name">Lily</span>
+          </button>
+          <button class="avatar-btn mint-btn" onclick="selectKid('Oliver')">
+            <img class="avatar-img" src="Oliver_Avatar.png" alt="Oliver">
+            <span class="avatar-name">Oliver</span>
+          </button>
+        </div>
       </div>
       <div class="fab-wrapper fab-right">
         <button class="banker-fab-inner" onclick="showPinModal()">🔒</button>
