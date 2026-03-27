@@ -97,16 +97,18 @@
     padding: 0;
     margin: -28px -20px -100px;
     min-height: calc(100vh - 88px);
-    background: url('Wonder_Wallet_Watiting_room.png') center top / cover no-repeat;
+    background: url('Wonder_Wallet_Watiting_room.png') center center / contain no-repeat;
+    background-color: #d6eaf8;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-    padding-bottom: 48px;
+    justify-content: center;
+    padding: 0 20px;
     position: relative;
   }
 
   .who-content {
-    padding: 0 20px;
+    padding: 0;
+    margin-top: -60px;
   }
 
   .who-title {
@@ -123,36 +125,36 @@
     text-align: center;
     font-size: 14px;
     color: rgba(255,255,255,0.9);
-    margin-bottom: 24px;
+    margin-bottom: 20px;
     font-weight: 700;
     text-shadow: 0 1px 4px rgba(0,0,0,0.3);
   }
 
-  .avatar-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .avatar-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
   .avatar-btn {
     background: rgba(255,255,255,0.92);
-    border: 4px solid var(--blue); border-radius: 28px;
-    padding: 20px 16px; text-align: center; cursor: pointer;
-    box-shadow: 0 6px 0 var(--blue-dark), 0 8px 24px rgba(0,0,0,0.2);
+    border: 3px solid var(--blue); border-radius: 22px;
+    padding: 12px 12px 14px; text-align: center; cursor: pointer;
+    box-shadow: 0 5px 0 var(--blue-dark), 0 8px 20px rgba(0,0,0,0.18);
     backdrop-filter: blur(8px);
     position: relative; top: 0; transition: transform 0.12s, box-shadow 0.12s;
   }
-  .avatar-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--blue-dark), 0 4px 12px rgba(0,0,0,0.15); top: 4px; }
-  .avatar-btn.mint-btn { border-color: var(--mint); box-shadow: 0 6px 0 var(--mint-dark), 0 8px 24px rgba(0,0,0,0.2); }
-  .avatar-btn.mint-btn:active { box-shadow: 0 2px 0 var(--mint-dark), 0 4px 12px rgba(0,0,0,0.15); }
+  .avatar-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--blue-dark), 0 2px 8px rgba(0,0,0,0.12); top: 4px; }
+  .avatar-btn.mint-btn { border-color: var(--mint); box-shadow: 0 5px 0 var(--mint-dark), 0 8px 20px rgba(0,0,0,0.18); }
+  .avatar-btn.mint-btn:active { box-shadow: 0 1px 0 var(--mint-dark), 0 2px 8px rgba(0,0,0,0.12); }
   .avatar-emoji { font-size: 56px; display: block; margin-bottom: 12px; }
-  .avatar-name { font-family: var(--font-display); font-size: 24px; color: var(--text); margin-top: 12px; }
+  .avatar-name { font-family: var(--font-display); font-size: 20px; color: var(--text); margin-top: 8px; }
 
   .avatar-img {
-    width: 110px;
-    height: 110px;
-    border-radius: 22px;
+    width: 80px;
+    height: 80px;
+    border-radius: 18px;
     object-fit: cover;
     object-position: top;
     display: block;
     margin: 0 auto;
-    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+    filter: drop-shadow(0 3px 6px rgba(0,0,0,0.12));
     transition: transform 0.15s;
   }
 
