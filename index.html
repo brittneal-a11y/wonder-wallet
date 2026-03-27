@@ -100,16 +100,17 @@
     min-height: calc(100vh - 88px);
     background: url('Wonder_Wallet_Watiting_room.png') center center / contain no-repeat;
     background-color: #d6eaf8;
-    display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    align-items: center;
     padding: 0 20px;
     position: relative;
   }
 
   .who-content {
+    width: 100%;
     padding: 0;
-    margin-top: 18%;
+    margin-top: 22%;
   }
 
   .who-title {
@@ -126,27 +127,36 @@
     text-align: center;
     font-size: 13px;
     color: rgba(255,255,255,0.9);
-    margin-bottom: 16px;
+    margin-bottom: 20px;
     font-weight: 700;
     text-shadow: 0 1px 4px rgba(0,0,0,0.3);
   }
 
-  .avatar-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  /* constrain grid so buttons don't stretch full width */
+  .avatar-grid {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 16px;
+  }
 
   .avatar-btn {
     background: rgba(255,255,255,0.92);
     border: 3px solid var(--blue); border-radius: 18px;
-    padding: 10px 8px 10px; text-align: center; cursor: pointer;
+    padding: 10px 10px 10px;
+    text-align: center; cursor: pointer;
     box-shadow: 0 5px 0 var(--blue-dark), 0 8px 20px rgba(0,0,0,0.18);
     backdrop-filter: blur(8px);
     position: relative; top: 0; transition: transform 0.12s, box-shadow 0.12s;
     display: flex; flex-direction: column; align-items: center;
+    width: 130px;
+    flex-shrink: 0;
   }
   .avatar-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--blue-dark), 0 2px 8px rgba(0,0,0,0.12); top: 4px; }
   .avatar-btn.mint-btn { border-color: var(--mint); box-shadow: 0 5px 0 var(--mint-dark), 0 8px 20px rgba(0,0,0,0.18); }
   .avatar-btn.mint-btn:active { box-shadow: 0 1px 0 var(--mint-dark), 0 2px 8px rgba(0,0,0,0.12); }
   .avatar-emoji { font-size: 56px; display: block; margin-bottom: 12px; }
-  .avatar-name { font-family: var(--font-display); font-size: 20px; color: var(--text); margin-top: 8px; }
+  .avatar-name { font-family: var(--font-display); font-size: 19px; color: var(--text); margin-top: 6px; line-height: 1; }
 
   .avatar-img {
     width: 80px;
@@ -790,9 +800,16 @@ async function selectKid(name) {
 }
 
 function navigate(page) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => {
+    p.classList.remove('active');
+    p.style.display = 'none';
+  });
   const target = document.getElementById('page-' + page);
-  if (target) { target.classList.add('active'); document.getElementById('atmScreen').scrollTop = 0; }
+  if (target) {
+    target.style.display = '';
+    target.classList.add('active');
+    document.getElementById('atmScreen').scrollTop = 0;
+  }
   if (page === 'earn')    renderEarnList();
   if (page === 'spend')   renderSpendList();
   if (page === 'balance') renderBalancePage();
