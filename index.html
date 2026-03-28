@@ -224,7 +224,7 @@
   .btn-balance { grid-column: 1 / -1; background: linear-gradient(135deg, var(--yellow) 0%, #ffe08a 100%); color: var(--text); box-shadow: 0 7px 0 var(--yellow-dark), 0 10px 24px var(--yellow-shadow); padding: 22px 24px; flex-direction: row; font-size: 20px; justify-content: center; gap: 14px; }
   .btn-balance:active { top: 5px; box-shadow: 0 2px 0 var(--yellow-dark), 0 4px 12px var(--yellow-shadow); }
 
-  /* ── ACTIVITY LIST ── */
+  /* ── ACTIVITY LIST — CATEGORIES ── */
   .page-title-row { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
 
   .back-btn {
@@ -240,30 +240,124 @@
   .badge-earn { background: rgba(62,213,152,0.15); color: var(--mint-dark); }
   .badge-spend { background: rgba(255,107,107,0.12); color: var(--coral-dark); }
 
-  .activity-list { display: flex; flex-direction: column; gap: 12px; }
+  .activity-list { display: flex; flex-direction: column; gap: 10px; }
+
+  /* ── CATEGORY HEADER ── */
+  .cat-section { border-radius: 20px; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.07); }
+
+  .cat-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 18px; cursor: pointer;
+    background: white;
+    border-bottom: 2px solid transparent;
+    transition: background 0.15s;
+    user-select: none;
+    position: relative;
+  }
+
+  .cat-header.earn-cat { border-left: 5px solid var(--mint); }
+  .cat-header.spend-cat { border-left: 5px solid var(--coral); }
+  .cat-header.open { border-bottom-color: #f0f2f5; }
+
+  .cat-header:active { background: #f7f9fc; }
+
+  .cat-emoji { font-size: 22px; flex-shrink: 0; }
+
+  .cat-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    color: var(--text);
+    flex: 1;
+    line-height: 1;
+  }
+
+  .cat-count {
+    font-size: 11px;
+    font-weight: 800;
+    color: #bbb;
+    letter-spacing: 0.5px;
+    margin-right: 6px;
+  }
+
+  .cat-chevron {
+    font-size: 14px;
+    color: #bbb;
+    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    flex-shrink: 0;
+  }
+
+  .cat-header.open .cat-chevron { transform: rotate(180deg); }
+
+  /* ── ACTIVITY CARDS INSIDE CATEGORY ── */
+  .cat-body {
+    display: none;
+    flex-direction: column;
+    background: white;
+  }
+
+  .cat-body.open { display: flex; }
 
   .activity-card {
-    background: white; border-radius: 20px; padding: 18px 20px;
-    display: flex; align-items: center; gap: 16px; cursor: pointer;
-    transition: transform 0.1s, box-shadow 0.1s; position: relative; top: 0;
-    box-shadow: 0 4px 0 rgba(0,0,0,0.08), 0 6px 18px rgba(0,0,0,0.06); border: 2.5px solid transparent;
+    padding: 16px 18px;
+    display: flex; align-items: center; gap: 14px; cursor: pointer;
+    transition: background 0.1s;
+    border-bottom: 1.5px solid #f5f7fa;
+    position: relative;
   }
-  .activity-card.earn-card { border-color: rgba(62,213,152,0.3); }
-  .activity-card.spend-card { border-color: rgba(255,107,107,0.3); }
-  .activity-card:active { transform: scale(0.97); box-shadow: 0 1px 0 rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.06); top: 2px; }
 
-  .act-emoji { width: 52px; height: 52px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; }
-  .earn-card .act-emoji { background: rgba(62,213,152,0.15); }
-  .spend-card .act-emoji { background: rgba(255,107,107,0.1); }
+  .activity-card:last-child { border-bottom: none; }
+  .activity-card:active { background: #f7f9fc; }
+  .activity-card.earn-card {}
+  .activity-card.spend-card {}
+  .activity-card.disabled { opacity: 0.45; cursor: not-allowed; }
 
-  .act-info { flex: 1; }
-  .act-name { font-weight: 800; font-size: 16px; color: var(--text); line-height: 1.2; }
-  .act-desc { font-size: 12px; color: #999; font-weight: 600; margin-top: 2px; }
-  .act-value { font-family: var(--font-display); font-size: 22px; }
+  /* expanded description area */
+  .act-expand {
+    display: none;
+    flex-direction: column;
+  }
+
+  .activity-card.expanded .act-expand { display: flex; }
+
+  .act-emoji { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; align-self: flex-start; margin-top: 2px; }
+  .earn-card .act-emoji { background: rgba(62,213,152,0.12); }
+  .spend-card .act-emoji { background: rgba(255,107,107,0.08); }
+  .disabled .act-emoji { background: #f0f2f5; }
+
+  .act-body { flex: 1; min-width: 0; }
+  .act-top { display: flex; align-items: center; gap: 8px; }
+  .act-name { font-weight: 800; font-size: 15px; color: var(--text); line-height: 1.2; flex: 1; }
+  .act-value { font-family: var(--font-display); font-size: 20px; flex-shrink: 0; }
   .earn-value { color: var(--mint-dark); }
   .spend-value { color: var(--coral); }
 
-  .qty-badge { font-size: 10px; font-weight: 800; background: rgba(74,144,226,0.12); color: var(--blue); padding: 3px 8px; border-radius: 10px; margin-top: 4px; display: inline-block; letter-spacing: 0.5px; }
+  .act-desc-text {
+    font-size: 12px; color: #999; font-weight: 600;
+    margin-top: 3px; line-height: 1.4;
+  }
+
+  .qty-badge { font-size: 10px; font-weight: 800; background: rgba(74,144,226,0.12); color: var(--blue); padding: 2px 7px; border-radius: 8px; margin-top: 4px; display: inline-block; letter-spacing: 0.5px; }
+
+  /* confirm button that appears when card is expanded */
+  .act-confirm-btn {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 12px;
+    font-family: var(--font-display);
+    font-size: 16px;
+    cursor: pointer;
+    align-self: flex-start;
+    transition: transform 0.1s, box-shadow 0.1s;
+    position: relative; top: 0;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  }
+
+  .act-confirm-btn.earn-confirm { background: var(--mint); box-shadow: 0 4px 0 var(--mint-dark); }
+  .act-confirm-btn.earn-confirm:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--mint-dark); top: 3px; }
+  .act-confirm-btn.spend-confirm { background: var(--coral); box-shadow: 0 4px 0 var(--coral-dark); }
+  .act-confirm-btn.spend-confirm:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--coral-dark); top: 3px; }
 
   /* ── QUANTITY MODAL ── */
   .qty-modal-overlay {
@@ -627,6 +721,14 @@
       <input class="form-input" id="editName" type="text" placeholder="e.g. Go for a bike ride">
     </div>
     <div class="form-group">
+      <label class="form-label">Category <span style="color:#bbb;font-size:11px;">(e.g. Book Bites)</span></label>
+      <input class="form-input" id="editCategory" type="text" placeholder="e.g. Fresh Air Fare">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description <span style="color:#bbb;font-size:11px;">(optional, shown when tapped)</span></label>
+      <input class="form-input" id="editDescription" type="text" placeholder="e.g. Read out loud for 20 minutes">
+    </div>
+    <div class="form-group">
       <label class="form-label">Summer Bucks Value <span style="color:#bbb;font-size:11px;">(per unit)</span></label>
       <input class="form-input" id="editValue" type="number" min="1" placeholder="e.g. 10">
     </div>
@@ -820,51 +922,130 @@ function goHome() { currentKid = null; navigate('who'); }
 function getBalance() { return appData.kids[currentKid]?.balance || 0; }
 function updateBalancePreview() { document.getElementById('balancePreview').textContent = getBalance(); }
 
-// ─── RENDER LISTS ─────────────────────────────────────────────────────────────
+// ─── RENDER LISTS — GROUPED BY CATEGORY ──────────────────────────────────────
 function renderEarnList() {
   if (GOOGLE_SHEET_URL) loadActivitiesFromSheets().then(() => {
-    document.getElementById('earnList').innerHTML = buildEarnHTML();
+    document.getElementById('earnList').innerHTML = buildCategoryHTML('earn');
   });
-  document.getElementById('earnList').innerHTML = buildEarnHTML();
-}
-
-function buildEarnHTML() {
-  return appData.earnActivities.map(act => `
-    <div class="activity-card earn-card" onclick="handleTap('earn','${act.id}')">
-      <div class="act-emoji">${act.emoji}</div>
-      <div class="act-info">
-        <div class="act-name">${act.name}</div>
-        ${act.allowQty
-          ? `<span class="qty-badge">× quantity · ${act.value} bucks/${act.unitLabel || 'unit'}</span>`
-          : `<div class="act-desc">Tap to earn!</div>`}
-      </div>
-      <div class="act-value earn-value">+${act.value}</div>
-    </div>`).join('');
+  document.getElementById('earnList').innerHTML = buildCategoryHTML('earn');
 }
 
 function renderSpendList() {
   if (GOOGLE_SHEET_URL) loadActivitiesFromSheets().then(() => {
-    document.getElementById('spendList').innerHTML = buildSpendHTML();
+    document.getElementById('spendList').innerHTML = buildCategoryHTML('spend');
   });
-  document.getElementById('spendList').innerHTML = buildSpendHTML();
+  document.getElementById('spendList').innerHTML = buildCategoryHTML('spend');
 }
 
-function buildSpendHTML() {
+function buildCategoryHTML(type) {
+  const activities = type === 'earn' ? appData.earnActivities : appData.spendActivities;
   const bal = getBalance();
-  return appData.spendActivities.map(act => {
-    const canAfford = bal >= act.value;
+
+  // Group activities by category, preserving order of first appearance
+  const categoryOrder = [];
+  const grouped = {};
+  activities.forEach(act => {
+    const cat = act.category || 'Other';
+    if (!grouped[cat]) { grouped[cat] = []; categoryOrder.push(cat); }
+    grouped[cat].push(act);
+  });
+
+  if (!categoryOrder.length) return '<div style="text-align:center;color:#bbb;padding:40px;font-weight:700;">No activities yet</div>';
+
+  return categoryOrder.map((cat, catIdx) => {
+    const acts = grouped[cat];
+    const catId = `cat-${type}-${catIdx}`;
+    const firstEmoji = acts[0]?.emoji || '⭐';
+
+    const actCards = acts.map(act => {
+      const canAfford = type === 'spend' ? bal >= act.value : true;
+      const disabledClass = !canAfford ? ' disabled' : '';
+      const typeClass = type === 'earn' ? 'earn-card' : 'spend-card';
+      const valueColor = type === 'earn' ? 'earn-value' : 'spend-value';
+      const valuePrefix = type === 'earn' ? '+' : '-';
+      const hasDesc = act.description && act.description.trim();
+
+      const qtyOrDesc = act.allowQty
+        ? `<span class="qty-badge">× quantity · ${act.value} bucks/${act.unitLabel || 'unit'}</span>`
+        : (hasDesc ? '' : '');
+
+      const expandContent = hasDesc || act.allowQty ? `
+        <div class="act-expand">
+          ${hasDesc ? `<div class="act-desc-text">${act.description}</div>` : ''}
+          ${act.allowQty
+            ? `<button class="act-confirm-btn ${type}-confirm" onclick="event.stopPropagation();handleTap('${type}','${act.id}')">Choose quantity →</button>`
+            : (canAfford
+                ? `<button class="act-confirm-btn ${type}-confirm" onclick="event.stopPropagation();doDirectActivity('${type}','${act.id}')">Confirm! ${type === 'earn' ? '⭐' : '🎉'}</button>`
+                : `<div style="font-size:12px;color:var(--coral);font-weight:800;margin-top:8px;">😢 Not enough bucks!</div>`)}
+        </div>` : '';
+
+      const tapAction = (hasDesc || act.allowQty)
+        ? `toggleCard('${act.id}')`
+        : (canAfford ? `doDirectActivity('${type}','${act.id}')` : 'insufficientFunds()');
+
+      return `
+        <div class="activity-card ${typeClass}${disabledClass}" id="actcard-${act.id}" onclick="${tapAction}">
+          <div class="act-emoji">${act.emoji}</div>
+          <div class="act-body">
+            <div class="act-top">
+              <span class="act-name">${act.name}</span>
+              <span class="act-value ${valueColor}">${valuePrefix}${act.value}</span>
+            </div>
+            ${qtyOrDesc}
+            ${expandContent}
+          </div>
+        </div>`;
+    }).join('');
+
     return `
-    <div class="activity-card spend-card${canAfford ? '' : '" style="opacity:0.5;cursor:not-allowed'}"
-         onclick="${canAfford ? `handleTap('spend','${act.id}')` : 'insufficientFunds()'}">
-      <div class="act-emoji">${act.emoji}</div>
-      <div class="act-info">
-        <div class="act-name">${act.name}</div>
-        ${act.allowQty
-          ? `<span class="qty-badge">× quantity · ${act.value} bucks/${act.unitLabel || 'unit'}</span>`
-          : `<div class="act-desc">${canAfford ? 'Tap to spend!' : 'Not enough bucks 😢'}</div>`}
-      </div>
-      <div class="act-value spend-value">-${act.value}</div>
-    </div>`}).join('');
+      <div class="cat-section" id="${catId}">
+        <div class="cat-header ${type}-cat" onclick="toggleCategory('${catId}')">
+          <span class="cat-emoji">${firstEmoji}</span>
+          <span class="cat-title">${cat}</span>
+          <span class="cat-count">${acts.length} activities</span>
+          <span class="cat-chevron">▾</span>
+        </div>
+        <div class="cat-body" id="${catId}-body">
+          ${actCards}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ─── CATEGORY & CARD TOGGLE ───────────────────────────────────────────────────
+function toggleCategory(catId) {
+  const header = document.querySelector(`#${catId} .cat-header`);
+  const body   = document.getElementById(`${catId}-body`);
+  const isOpen = body.classList.contains('open');
+
+  // Close all other categories in the same list
+  const allBodies  = body.closest('.activity-list').querySelectorAll('.cat-body');
+  const allHeaders = body.closest('.activity-list').querySelectorAll('.cat-header');
+  allBodies.forEach(b  => b.classList.remove('open'));
+  allHeaders.forEach(h => h.classList.remove('open'));
+
+  // Toggle this one
+  if (!isOpen) {
+    body.classList.add('open');
+    header.classList.add('open');
+  }
+}
+
+function toggleCard(actId) {
+  const card = document.getElementById(`actcard-${actId}`);
+  if (!card) return;
+  // Close any other expanded card in the same category body
+  const siblings = card.closest('.cat-body').querySelectorAll('.activity-card.expanded');
+  siblings.forEach(s => { if (s !== card) s.classList.remove('expanded'); });
+  card.classList.toggle('expanded');
+}
+
+// Direct activity (no quantity, no description expansion needed)
+function doDirectActivity(type, id) {
+  const list = type === 'earn' ? appData.earnActivities : appData.spendActivities;
+  const act  = list.find(a => a.id === id);
+  if (!act) return;
+  doActivity(type, act, 1);
 }
 
 // ─── ACTIVITY TAP ─────────────────────────────────────────────────────────────
@@ -1074,7 +1255,10 @@ function renderEditList(type) {
     ${activities.map(act=>`
       <div class="edit-row">
         <span class="edit-emoji">${act.emoji}</span>
-        <span class="edit-name">${act.name}${act.allowQty?`<span class="edit-qty-tag">× qty</span>`:''}</span>
+        <div style="flex:1;min-width:0;">
+          <div class="edit-name">${act.name}${act.allowQty?`<span class="edit-qty-tag">× qty</span>`:''}</div>
+          ${act.category ? `<div style="font-size:11px;color:#aaa;font-weight:700;margin-top:1px;">${act.category}</div>` : ''}
+        </div>
         <span class="edit-val">${act.value}</span>
         <div class="edit-actions">
           <button class="edit-btn edit-btn-edit" onclick="openEditActivity('${type}','${act.id}')">✏️</button>
@@ -1097,10 +1281,12 @@ function openAddActivity(type) {
   document.getElementById('unitLabelGroup').classList.remove('visible');
   document.getElementById('editModalTitle').textContent = type==='earn' ? 'Add Earn Activity ⭐' : 'Add Spend Activity 🛍️';
   document.getElementById('editModalSub').textContent   = 'Fill in the details below';
-  document.getElementById('editEmoji').value     = '';
-  document.getElementById('editName').value      = '';
-  document.getElementById('editValue').value     = '';
-  document.getElementById('editUnitLabel').value = '';
+  document.getElementById('editEmoji').value       = '';
+  document.getElementById('editName').value        = '';
+  document.getElementById('editCategory').value    = '';
+  document.getElementById('editDescription').value = '';
+  document.getElementById('editValue').value       = '';
+  document.getElementById('editUnitLabel').value   = '';
   document.getElementById('editModal').classList.add('show');
 }
 
@@ -1114,21 +1300,25 @@ function openEditActivity(type, id) {
   document.getElementById('unitLabelGroup').classList.toggle('visible', qtyToggleOn);
   document.getElementById('editModalTitle').textContent = 'Edit Activity';
   document.getElementById('editModalSub').textContent   = 'Change the details below';
-  document.getElementById('editEmoji').value     = act.emoji;
-  document.getElementById('editName').value      = act.name;
-  document.getElementById('editValue').value     = act.value;
-  document.getElementById('editUnitLabel').value = act.unitLabel || '';
+  document.getElementById('editEmoji').value       = act.emoji;
+  document.getElementById('editName').value        = act.name;
+  document.getElementById('editCategory').value    = act.category    || '';
+  document.getElementById('editDescription').value = act.description || '';
+  document.getElementById('editValue').value       = act.value;
+  document.getElementById('editUnitLabel').value   = act.unitLabel   || '';
   document.getElementById('editModal').classList.add('show');
 }
 
 function closeEditModal() { document.getElementById('editModal').classList.remove('show'); editingActivity=null; }
 
 async function saveActivity() {
-  const emoji     = document.getElementById('editEmoji').value.trim() || '⭐';
-  const name      = document.getElementById('editName').value.trim();
-  const value     = parseInt(document.getElementById('editValue').value);
-  const allowQty  = qtyToggleOn;
-  const unitLabel = document.getElementById('editUnitLabel').value.trim();
+  const emoji       = document.getElementById('editEmoji').value.trim() || '⭐';
+  const name        = document.getElementById('editName').value.trim();
+  const category    = document.getElementById('editCategory').value.trim();
+  const description = document.getElementById('editDescription').value.trim();
+  const value       = parseInt(document.getElementById('editValue').value);
+  const allowQty    = qtyToggleOn;
+  const unitLabel   = document.getElementById('editUnitLabel').value.trim();
 
   if (!name || isNaN(value) || value < 1) {
     document.getElementById('editName').style.borderColor = '#FF6B6B';
@@ -1140,10 +1330,10 @@ async function saveActivity() {
   const list = type==='earn' ? appData.earnActivities : appData.spendActivities;
 
   if (id===null) {
-    list.push({ id: Date.now().toString(), emoji, name, value, allowQty, unitLabel });
+    list.push({ id: Date.now().toString(), emoji, name, category, description, value, allowQty, unitLabel });
   } else {
     const act = list.find(a=>a.id===id);
-    if (act) Object.assign(act, { emoji, name, value, allowQty, unitLabel });
+    if (act) Object.assign(act, { emoji, name, category, description, value, allowQty, unitLabel });
   }
 
   closeEditModal();
