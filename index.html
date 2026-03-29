@@ -534,7 +534,85 @@
   .modal-btn-cancel { background: #f0f2f5; color: #aaa; box-shadow: 0 5px 0 #d8dce4; }
   .modal-btn-cancel:active { transform: translateY(3px); box-shadow: 0 2px 0 #d8dce4; top: 3px; }
 
-  /* ── FABs ── */
+  /* ── SCREEN TIME LOCK ── */
+  .lock-section {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.07);
+    margin-bottom: 12px;
+  }
+
+  .lock-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px;
+    border-bottom: 1.5px solid #f0f2f5;
+  }
+
+  .lock-header-left { display: flex; align-items: center; gap: 10px; }
+  .lock-header-icon { font-size: 22px; }
+  .lock-header-title { font-family: var(--font-display); font-size: 18px; color: var(--text); }
+  .lock-header-sub { font-size: 12px; color: #aaa; font-weight: 600; margin-top: 1px; }
+
+  .lock-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 14px; }
+  .lock-body.hidden { display: none; }
+
+  .lock-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .lock-row-label { font-weight: 800; font-size: 14px; color: var(--text); flex: 1; }
+  .lock-row-sub { font-size: 11px; color: #aaa; font-weight: 600; margin-top: 2px; }
+
+  .time-input {
+    padding: 10px 12px;
+    border: 2.5px solid #e0e6f0;
+    border-radius: 12px;
+    font-family: var(--font-main);
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.15s;
+    width: 120px;
+    text-align: center;
+  }
+
+  .time-input:focus { border-color: var(--blue); }
+
+  .lock-save-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--blue);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-family: var(--font-display);
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 4px 0 var(--blue-dark);
+    transition: transform 0.1s, box-shadow 0.1s;
+    position: relative; top: 0;
+  }
+
+  .lock-save-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--blue-dark); top: 3px; }
+
+  /* locked activity indicator on spend page */
+  .lock-notice {
+    font-size: 11px;
+    color: var(--coral);
+    font-weight: 800;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
   .fab-wrapper { position: absolute; bottom: 28px; z-index: 100; }
   .fab-right { right: 20px; }
   .fab-left  { left: 20px; }
@@ -656,6 +734,50 @@
         <button class="back-btn" onclick="navigate('home')">←</button>
         <div class="page-title">🏦 Banker Panel</div>
       </div>
+
+      <!-- SCREEN TIME LOCK -->
+      <div class="banker-section">
+        <div class="banker-section-title">🔒 Screen Time Rules</div>
+        <div class="lock-section">
+          <div class="lock-header">
+            <div class="lock-header-left">
+              <span class="lock-header-icon">📵</span>
+              <div>
+                <div class="lock-header-title">Screen Time Lock</div>
+                <div class="lock-header-sub">Block a category during set hours</div>
+              </div>
+            </div>
+            <button class="toggle-switch" id="lockToggle" onclick="toggleLockEnabled()">
+              <div class="toggle-knob"></div>
+            </button>
+          </div>
+          <div class="lock-body" id="lockBody">
+            <div class="lock-row">
+              <div>
+                <div class="lock-row-label">Locked Category</div>
+                <div class="lock-row-sub">Exact name from your sheet</div>
+              </div>
+              <input class="time-input" id="lockCategory" type="text" value="Tech Treats" style="width:140px;font-size:13px;">
+            </div>
+            <div class="lock-row">
+              <div>
+                <div class="lock-row-label">Lock Start</div>
+                <div class="lock-row-sub">No screen time after</div>
+              </div>
+              <input class="time-input" id="lockStart" type="time" value="10:00">
+            </div>
+            <div class="lock-row">
+              <div>
+                <div class="lock-row-label">Lock End</div>
+                <div class="lock-row-sub">Screen time allowed again</div>
+              </div>
+              <input class="time-input" id="lockEnd" type="time" value="15:00">
+            </div>
+            <button class="lock-save-btn" onclick="saveScreenTimeLock()">Save Lock Settings ✓</button>
+          </div>
+        </div>
+      </div>
+
       <div class="banker-section">
         <div class="banker-section-title">⭐ Earn Activities</div>
         <div id="earnEditList"></div>
@@ -857,7 +979,73 @@ async function sheetsPost(payload) {
   } catch(e) { console.warn('Sheets POST failed:', e); }
 }
 
-// ─── ACTIVITIES SYNC ──────────────────────────────────────────────────────────
+// ─── SCREEN TIME LOCK SETTINGS ───────────────────────────────────────────────
+let lockSettings = {
+  enabled:  false,
+  category: 'Tech Treats',
+  startTime: '10:00',
+  endTime:   '15:00'
+};
+
+function isScreenTimeLocked(category) {
+  if (!lockSettings.enabled) return false;
+  if (category !== lockSettings.category) return false;
+  const now   = new Date();
+  const hhmm  = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+  return hhmm >= lockSettings.startTime && hhmm < lockSettings.endTime;
+}
+
+function formatTime12(hhmm) {
+  if (!hhmm) return '';
+  const [h, m] = hhmm.split(':').map(Number);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const hour  = h % 12 || 12;
+  return `${hour}:${m.toString().padStart(2,'0')} ${ampm}`;
+}
+
+async function loadSettingsFromSheets() {
+  const data = await sheetsGet({ action: 'getSettings' });
+  if (!data) return;
+  if (data.lockEnabled  !== undefined) lockSettings.enabled   = data.lockEnabled;
+  if (data.lockCategory !== undefined) lockSettings.category  = data.lockCategory;
+  if (data.lockStart    !== undefined) lockSettings.startTime = data.lockStart;
+  if (data.lockEnd      !== undefined) lockSettings.endTime   = data.lockEnd;
+}
+
+async function saveScreenTimeLock() {
+  lockSettings.enabled   = document.getElementById('lockToggle').classList.contains('on');
+  lockSettings.category  = document.getElementById('lockCategory').value.trim() || 'Tech Treats';
+  lockSettings.startTime = document.getElementById('lockStart').value;
+  lockSettings.endTime   = document.getElementById('lockEnd').value;
+
+  await sheetsPost({
+    action:       'saveSettings',
+    lockEnabled:  lockSettings.enabled,
+    lockCategory: lockSettings.category,
+    lockStart:    lockSettings.startTime,
+    lockEnd:      lockSettings.endTime
+  });
+
+  showToast('🔒', 'Lock Saved!', 'Screen time rules updated');
+}
+
+function toggleLockEnabled() {
+  const btn = document.getElementById('lockToggle');
+  const body = document.getElementById('lockBody');
+  const isOn = !btn.classList.contains('on');
+  btn.classList.toggle('on', isOn);
+  body.classList.toggle('hidden', !isOn);
+}
+
+function populateLockUI() {
+  const btn  = document.getElementById('lockToggle');
+  const body = document.getElementById('lockBody');
+  btn.classList.toggle('on', lockSettings.enabled);
+  body.classList.toggle('hidden', !lockSettings.enabled);
+  document.getElementById('lockCategory').value = lockSettings.category;
+  document.getElementById('lockStart').value    = lockSettings.startTime;
+  document.getElementById('lockEnd').value      = lockSettings.endTime;
+}
 async function loadActivitiesFromSheets() {
   const data = await sheetsGet({ action: 'getActivities' });
   if (!data) return;
@@ -875,7 +1063,10 @@ async function saveActivitiesToSheets() {
 
 // ─── ROUTING ──────────────────────────────────────────────────────────────────
 function init() {
-  if (GOOGLE_SHEET_URL) loadActivitiesFromSheets();
+  if (GOOGLE_SHEET_URL) {
+    loadActivitiesFromSheets();
+    loadSettingsFromSheets();
+  }
   const params = new URLSearchParams(window.location.search);
   const kid = params.get('kid');
   if (kid === 'Lily' || kid === 'Oliver') selectKid(kid);
@@ -959,17 +1150,23 @@ function buildCategoryHTML(type) {
 
     const actCards = acts.map(act => {
       const canAfford = type === 'spend' ? bal >= act.value : true;
-      const disabledClass = !canAfford ? ' disabled' : '';
+      const catLocked = type === 'spend' && isScreenTimeLocked(cat);
+      const isDisabled = !canAfford || catLocked;
+      const disabledClass = isDisabled ? ' disabled' : '';
       const typeClass = type === 'earn' ? 'earn-card' : 'spend-card';
       const valueColor = type === 'earn' ? 'earn-value' : 'spend-value';
       const valuePrefix = type === 'earn' ? '+' : '-';
       const hasDesc = act.description && act.description.trim();
 
+      const lockNotice = catLocked
+        ? `<div class="lock-notice">🕒 Available before ${formatTime12(lockSettings.startTime)} & after ${formatTime12(lockSettings.endTime)}</div>`
+        : '';
+
       const qtyOrDesc = act.allowQty
         ? `<span class="qty-badge">× quantity · ${act.value} bucks/${act.unitLabel || 'unit'}</span>`
         : (hasDesc ? '' : '');
 
-      const expandContent = hasDesc || act.allowQty ? `
+      const expandContent = !catLocked && (hasDesc || act.allowQty) ? `
         <div class="act-expand">
           ${hasDesc ? `<div class="act-desc-text">${act.description}</div>` : ''}
           ${act.allowQty
@@ -979,9 +1176,11 @@ function buildCategoryHTML(type) {
                 : `<div style="font-size:12px;color:var(--coral);font-weight:800;margin-top:8px;">😢 Not enough bucks!</div>`)}
         </div>` : '';
 
-      const tapAction = (hasDesc || act.allowQty)
-        ? `toggleCard('${act.id}')`
-        : (canAfford ? `doDirectActivity('${type}','${act.id}')` : 'insufficientFunds()');
+      const tapAction = catLocked
+        ? 'screenTimeLocked()'
+        : (hasDesc || act.allowQty)
+          ? `toggleCard('${act.id}')`
+          : (canAfford ? `doDirectActivity('${type}','${act.id}')` : 'insufficientFunds()');
 
       return `
         <div class="activity-card ${typeClass}${disabledClass}" id="actcard-${act.id}" onclick="${tapAction}">
@@ -991,6 +1190,7 @@ function buildCategoryHTML(type) {
               <span class="act-name">${act.name}</span>
               <span class="act-value ${valueColor}">${valuePrefix}${act.value}</span>
             </div>
+            ${lockNotice}
             ${qtyOrDesc}
             ${expandContent}
           </div>
@@ -1146,6 +1346,7 @@ async function doActivity(type, act, qty) {
 }
 
 function insufficientFunds() { showToast('😢','Not Enough Bucks!','Keep earning to unlock this!'); }
+function screenTimeLocked() { showToast('🔒','Bank is Closed!',`Screen time available before ${formatTime12(lockSettings.startTime)} & after ${formatTime12(lockSettings.endTime)}`); }
 
 // ─── BALANCE PAGE ─────────────────────────────────────────────────────────────
 async function renderBalancePage() {
@@ -1239,7 +1440,11 @@ function checkPin() {
 
 // ─── BANKER PANEL ─────────────────────────────────────────────────────────────
 async function renderBankerPanel() {
-  if (GOOGLE_SHEET_URL) await loadActivitiesFromSheets();
+  if (GOOGLE_SHEET_URL) {
+    await loadActivitiesFromSheets();
+    await loadSettingsFromSheets();
+  }
+  populateLockUI();
   renderEditList('earn');
   renderEditList('spend');
 }
