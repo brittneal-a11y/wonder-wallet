@@ -613,6 +613,183 @@
     align-items: center;
     gap: 4px;
   }
+
+  /* ── DAILY SURPRISE ── */
+  @keyframes surpriseGlow {
+    0%   { box-shadow: 0 0 0 0 rgba(255,209,102,0.5), 0 6px 24px rgba(255,209,102,0.3); }
+    50%  { box-shadow: 0 0 0 8px rgba(255,209,102,0), 0 6px 24px rgba(255,209,102,0.5); }
+    100% { box-shadow: 0 0 0 0 rgba(255,209,102,0.5), 0 6px 24px rgba(255,209,102,0.3); }
+  }
+
+  @keyframes sparkle {
+    0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    50% { transform: scale(1.2) rotate(15deg); opacity: 0.8; }
+  }
+
+  .surprise-card {
+    background: linear-gradient(135deg, #fffbe6 0%, #fff3c4 100%);
+    border: 3px solid var(--yellow);
+    border-radius: 22px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+    cursor: pointer;
+    animation: surpriseGlow 2s ease-in-out infinite;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.1s;
+  }
+
+  .surprise-card:active { transform: scale(0.97); }
+
+  .surprise-card::before {
+    content: '';
+    position: absolute;
+    top: -20px; right: -20px;
+    width: 80px; height: 80px;
+    background: rgba(255,209,102,0.2);
+    border-radius: 50%;
+  }
+
+  .surprise-label {
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--yellow-dark);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .surprise-sparkle {
+    display: inline-block;
+    animation: sparkle 1.5s ease-in-out infinite;
+  }
+
+  .surprise-main {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .surprise-emoji {
+    width: 52px; height: 52px;
+    border-radius: 16px;
+    background: rgba(255,209,102,0.25);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    flex-shrink: 0;
+  }
+
+  .surprise-info { flex: 1; }
+
+  .surprise-name {
+    font-weight: 800;
+    font-size: 16px;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .surprise-desc {
+    font-size: 12px;
+    color: #888;
+    font-weight: 600;
+    margin-top: 2px;
+  }
+
+  .surprise-value-col { text-align: right; }
+
+  .surprise-old-value {
+    font-family: var(--font-display);
+    font-size: 14px;
+    color: #bbb;
+    text-decoration: line-through;
+  }
+
+  .surprise-new-value {
+    font-family: var(--font-display);
+    font-size: 26px;
+    color: var(--yellow-dark);
+    line-height: 1;
+  }
+
+  .surprise-multiplier {
+    font-size: 11px;
+    font-weight: 900;
+    color: var(--yellow-dark);
+    background: rgba(255,209,102,0.3);
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-top: 3px;
+    display: inline-block;
+  }
+
+  /* banker surprise section */
+  .surprise-select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2.5px solid #e0e6f0;
+    border-radius: 14px;
+    font-family: var(--font-main);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.15s;
+    appearance: none;
+    cursor: pointer;
+  }
+
+  .surprise-select:focus { border-color: var(--yellow-dark); }
+
+  .surprise-type-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+
+  .surprise-type-btn {
+    flex: 1;
+    padding: 10px;
+    border: 2.5px solid #e0e6f0;
+    border-radius: 12px;
+    font-family: var(--font-main);
+    font-size: 13px;
+    font-weight: 800;
+    color: #aaa;
+    background: var(--bg);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+
+  .surprise-type-btn.active {
+    border-color: var(--yellow-dark);
+    background: rgba(255,209,102,0.15);
+    color: var(--yellow-dark);
+  }
+
+  .dice-btn {
+    width: 100%;
+    padding: 12px;
+    background: rgba(255,209,102,0.15);
+    border: 2.5px dashed var(--yellow-dark);
+    border-radius: 14px;
+    font-family: var(--font-main);
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--yellow-dark);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.15s;
+  }
+
+  .dice-btn:active { background: rgba(255,209,102,0.3); }
   .fab-wrapper { position: absolute; bottom: 28px; z-index: 100; }
   .fab-right { right: 20px; }
   .fab-left  { left: 20px; }
@@ -684,6 +861,7 @@
           </div>
         </div>
       </div>
+      <div id="surpriseCardSlot"></div>
       <div class="action-grid">
         <button class="action-btn btn-earn" onclick="navigate('earn')"><span class="btn-icon">⭐</span>Earn</button>
         <button class="action-btn btn-spend" onclick="navigate('spend')"><span class="btn-icon">🛍️</span>Spend</button>
@@ -774,6 +952,47 @@
               <input class="time-input" id="lockEnd" type="time" value="15:00">
             </div>
             <button class="lock-save-btn" onclick="saveScreenTimeLock()">Save Lock Settings ✓</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- DAILY SURPRISE -->
+      <div class="banker-section">
+        <div class="banker-section-title">✨ Daily Surprise</div>
+        <div class="lock-section">
+          <div class="lock-header">
+            <div class="lock-header-left">
+              <span class="lock-header-icon">🎲</span>
+              <div>
+                <div class="lock-header-title">Today's Bonus</div>
+                <div class="lock-header-sub">Lily only · resets at midnight</div>
+              </div>
+            </div>
+            <button class="toggle-switch" id="surpriseToggle" onclick="toggleSurpriseEnabled()">
+              <div class="toggle-knob"></div>
+            </button>
+          </div>
+          <div class="lock-body" id="surpriseBody">
+            <div>
+              <div class="lock-row-label" style="margin-bottom:8px;">Target Type</div>
+              <div class="surprise-type-row">
+                <button class="surprise-type-btn active" id="typeBtnActivity" onclick="setSurpriseType('activity')">Single Activity</button>
+                <button class="surprise-type-btn" id="typeBtnCategory" onclick="setSurpriseType('category')">Whole Category</button>
+              </div>
+            </div>
+            <div>
+              <div class="lock-row-label" style="margin-bottom:8px;" id="surpriseSelectLabel">Choose Activity</div>
+              <select class="surprise-select" id="surpriseTarget"></select>
+            </div>
+            <button class="dice-btn" onclick="pickRandom()">🎲 Pick Random for Me!</button>
+            <div class="lock-row">
+              <div>
+                <div class="lock-row-label">Multiplier</div>
+                <div class="lock-row-sub">e.g. 2 = double bucks</div>
+              </div>
+              <input class="time-input" id="surpriseMultiplier" type="number" value="2" min="1.5" step="0.5" style="width:90px;">
+            </div>
+            <button class="lock-save-btn" style="background:linear-gradient(135deg,var(--yellow-dark),#e0a800);box-shadow:0 4px 0 #c49000;" onclick="saveDailySurprise()">Set Today's Surprise ✨</button>
           </div>
         </div>
       </div>
@@ -1010,6 +1229,12 @@ async function loadSettingsFromSheets() {
   if (data.lockCategory !== undefined) lockSettings.category  = data.lockCategory;
   if (data.lockStart    !== undefined) lockSettings.startTime = data.lockStart;
   if (data.lockEnd      !== undefined) lockSettings.endTime   = data.lockEnd;
+  // surprise settings
+  if (data.surpriseEnabled    !== undefined) surpriseSettings.enabled    = data.surpriseEnabled;
+  if (data.surpriseType       !== undefined) surpriseSettings.type       = data.surpriseType;
+  if (data.surpriseTarget     !== undefined) surpriseSettings.target     = data.surpriseTarget;
+  if (data.surpriseMultiplier !== undefined) surpriseSettings.multiplier = Number(data.surpriseMultiplier) || 2;
+  if (data.surpriseDate       !== undefined) surpriseSettings.date       = data.surpriseDate;
 }
 
 async function saveScreenTimeLock() {
@@ -1023,7 +1248,13 @@ async function saveScreenTimeLock() {
     lockEnabled:  lockSettings.enabled,
     lockCategory: lockSettings.category,
     lockStart:    lockSettings.startTime,
-    lockEnd:      lockSettings.endTime
+    lockEnd:      lockSettings.endTime,
+    // preserve surprise settings
+    surpriseEnabled:    surpriseSettings.enabled,
+    surpriseType:       surpriseSettings.type,
+    surpriseTarget:     surpriseSettings.target,
+    surpriseMultiplier: surpriseSettings.multiplier,
+    surpriseDate:       surpriseSettings.date
   });
 
   showToast('🔒', 'Lock Saved!', 'Screen time rules updated');
@@ -1045,6 +1276,214 @@ function populateLockUI() {
   document.getElementById('lockCategory').value = lockSettings.category;
   document.getElementById('lockStart').value    = lockSettings.startTime;
   document.getElementById('lockEnd').value      = lockSettings.endTime;
+}
+
+// ─── DAILY SURPRISE ───────────────────────────────────────────────────────────
+let surpriseSettings = {
+  enabled:    false,
+  type:       'activity', // 'activity' or 'category'
+  target:     '',         // activity id or category name
+  multiplier: 2,
+  date:       ''          // YYYY-MM-DD — auto-expires at midnight
+};
+
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function isSurpriseActive() {
+  return surpriseSettings.enabled && surpriseSettings.target && surpriseSettings.date === todayStr();
+}
+
+function getSurpriseActivities() {
+  // Returns array of earn activities that are boosted today
+  if (!isSurpriseActive()) return [];
+  if (surpriseSettings.type === 'activity') {
+    const act = appData.earnActivities.find(a => a.id === surpriseSettings.target);
+    return act ? [act] : [];
+  } else {
+    return appData.earnActivities.filter(a => (a.category || 'Other') === surpriseSettings.target);
+  }
+}
+
+function toggleSurpriseEnabled() {
+  const btn  = document.getElementById('surpriseToggle');
+  const body = document.getElementById('surpriseBody');
+  const isOn = !btn.classList.contains('on');
+  btn.classList.toggle('on', isOn);
+  body.classList.toggle('hidden', !isOn);
+}
+
+function setSurpriseType(type) {
+  surpriseSettings.type = type;
+  document.getElementById('typeBtnActivity').classList.toggle('active', type === 'activity');
+  document.getElementById('typeBtnCategory').classList.toggle('active', type === 'category');
+  document.getElementById('surpriseSelectLabel').textContent = type === 'activity' ? 'Choose Activity' : 'Choose Category';
+  populateSurpriseSelect();
+}
+
+function populateSurpriseSelect() {
+  const sel = document.getElementById('surpriseTarget');
+  sel.innerHTML = '';
+  if (surpriseSettings.type === 'activity') {
+    appData.earnActivities.forEach(act => {
+      const opt = document.createElement('option');
+      opt.value = act.id;
+      opt.textContent = `${act.emoji} ${act.name} (+${act.value} bucks)`;
+      if (act.id === surpriseSettings.target) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  } else {
+    const cats = [...new Set(appData.earnActivities.map(a => a.category || 'Other'))];
+    cats.forEach(cat => {
+      const opt = document.createElement('option');
+      opt.value = cat;
+      opt.textContent = cat;
+      if (cat === surpriseSettings.target) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  }
+}
+
+function pickRandom() {
+  const type = surpriseSettings.type;
+  if (type === 'activity') {
+    const idx = Math.floor(Math.random() * appData.earnActivities.length);
+    document.getElementById('surpriseTarget').value = appData.earnActivities[idx]?.id || '';
+  } else {
+    const cats = [...new Set(appData.earnActivities.map(a => a.category || 'Other'))];
+    const idx  = Math.floor(Math.random() * cats.length);
+    document.getElementById('surpriseTarget').value = cats[idx] || '';
+  }
+  // little spin animation on the button
+  const btn = document.querySelector('.dice-btn');
+  btn.textContent = '🎲 Picked!';
+  setTimeout(() => { btn.textContent = '🎲 Pick Random for Me!'; }, 1200);
+}
+
+function populateSurpriseUI() {
+  const btn  = document.getElementById('surpriseToggle');
+  const body = document.getElementById('surpriseBody');
+  const isActive = isSurpriseActive();
+  btn.classList.toggle('on', surpriseSettings.enabled && isActive);
+  body.classList.toggle('hidden', !(surpriseSettings.enabled));
+  setSurpriseType(surpriseSettings.type);
+  document.getElementById('surpriseMultiplier').value = surpriseSettings.multiplier;
+}
+
+async function saveDailySurprise() {
+  const isOn      = document.getElementById('surpriseToggle').classList.contains('on');
+  const target    = document.getElementById('surpriseTarget').value;
+  const multi     = parseFloat(document.getElementById('surpriseMultiplier').value) || 2;
+
+  surpriseSettings.enabled    = isOn;
+  surpriseSettings.target     = target;
+  surpriseSettings.multiplier = multi;
+  surpriseSettings.date       = todayStr();
+
+  await sheetsPost({
+    action:             'saveSettings',
+    lockEnabled:        lockSettings.enabled,
+    lockCategory:       lockSettings.category,
+    lockStart:          lockSettings.startTime,
+    lockEnd:            lockSettings.endTime,
+    surpriseEnabled:    isOn,
+    surpriseType:       surpriseSettings.type,
+    surpriseTarget:     target,
+    surpriseMultiplier: multi,
+    surpriseDate:       todayStr()
+  });
+
+  showToast('✨', 'Surprise Set!', `${multi}x bucks active today!`);
+  confettiBurst();
+}
+
+function renderSurpriseCard() {
+  const slot = document.getElementById('surpriseCardSlot');
+  if (!slot) return;
+
+  // Only show for Lily
+  if (currentKid !== 'Lily' || !isSurpriseActive()) {
+    slot.innerHTML = '';
+    return;
+  }
+
+  const boosted = getSurpriseActivities();
+  if (!boosted.length) { slot.innerHTML = ''; return; }
+
+  const multi = surpriseSettings.multiplier;
+  const isCategory = surpriseSettings.type === 'category';
+  const label = isCategory ? surpriseSettings.target : boosted[0].name;
+
+  // For category: show summary card; for single: show specific card
+  if (isCategory) {
+    const totalActs = boosted.length;
+    slot.innerHTML = `
+      <div class="surprise-card" onclick="openCategorySurprise()">
+        <div class="surprise-label">
+          <span class="surprise-sparkle">✨</span>
+          TODAY'S SPECIAL CATEGORY
+          <span class="surprise-sparkle">✨</span>
+        </div>
+        <div class="surprise-main">
+          <div class="surprise-emoji">${boosted[0].emoji}</div>
+          <div class="surprise-info">
+            <div class="surprise-name">${label}</div>
+            <div class="surprise-desc">All ${totalActs} activities earn ${multi}x bucks today!</div>
+          </div>
+          <div class="surprise-value-col">
+            <div class="surprise-multiplier">${multi}x BONUS</div>
+          </div>
+        </div>
+      </div>`;
+  } else {
+    const act = boosted[0];
+    const boostedVal = Math.round(act.value * multi);
+    slot.innerHTML = `
+      <div class="surprise-card" onclick="doSurpriseActivity('${act.id}')">
+        <div class="surprise-label">
+          <span class="surprise-sparkle">✨</span>
+          TODAY'S SPECIAL ACTIVITY
+          <span class="surprise-sparkle">✨</span>
+        </div>
+        <div class="surprise-main">
+          <div class="surprise-emoji">${act.emoji}</div>
+          <div class="surprise-info">
+            <div class="surprise-name">${act.name}</div>
+            <div class="surprise-desc">${act.description || 'Tap to earn bonus bucks!'}</div>
+          </div>
+          <div class="surprise-value-col">
+            <div class="surprise-old-value">+${act.value}</div>
+            <div class="surprise-new-value">+${boostedVal}</div>
+            <div class="surprise-multiplier">${multi}x BONUS</div>
+          </div>
+        </div>
+      </div>`;
+  }
+}
+
+function doSurpriseActivity(actId) {
+  const act = appData.earnActivities.find(a => a.id === actId);
+  if (!act) return;
+  const boostedValue = Math.round(act.value * surpriseSettings.multiplier);
+  const boostedAct = { ...act, value: boostedValue, name: act.name + ' ✨' };
+  doActivity('earn', boostedAct, 1);
+}
+
+function openCategorySurprise() {
+  // Navigate to earn page first, then open the matching category
+  navigate('earn');
+  setTimeout(() => {
+    const cats = document.querySelectorAll('#earnList .cat-header');
+    cats.forEach(header => {
+      if (header.querySelector('.cat-title')?.textContent === surpriseSettings.target) {
+        const catId = header.closest('.cat-section')?.id;
+        if (catId) toggleCategory(catId);
+        header.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  }, 100);
 }
 async function loadActivitiesFromSheets() {
   const data = await sheetsGet({ action: 'getActivities' });
@@ -1077,19 +1516,22 @@ async function selectKid(name) {
   currentKid = name;
   document.getElementById('greetingName').textContent = name + '!';
   document.getElementById('balancePreview').textContent = '...';
-  // swap greeting card avatar
   const avatarSrc = name === 'Lily' ? 'Lily_Avatar.png' : 'Oliver_Avatar.png';
   document.getElementById('greetingAvatar').src = avatarSrc;
   document.getElementById('greetingAvatar').alt = name;
   navigate('home');
   if (GOOGLE_SHEET_URL) {
-    const data = await sheetsGet({ action: 'getKidData', child: name });
-    if (data) {
-      appData.kids[name].balance = data.balance;
-      appData.kids[name].transactions = data.transactions;
+    const [kidData] = await Promise.all([
+      sheetsGet({ action: 'getKidData', child: name }),
+      loadSettingsFromSheets()
+    ]);
+    if (kidData) {
+      appData.kids[name].balance = kidData.balance;
+      appData.kids[name].transactions = kidData.transactions;
     }
   }
   updateBalancePreview();
+  renderSurpriseCard();
 }
 
 function navigate(page) {
@@ -1445,6 +1887,7 @@ async function renderBankerPanel() {
     await loadSettingsFromSheets();
   }
   populateLockUI();
+  populateSurpriseUI();
   renderEditList('earn');
   renderEditList('spend');
 }
