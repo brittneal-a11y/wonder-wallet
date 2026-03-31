@@ -1234,27 +1234,9 @@ async function loadSettingsFromSheets() {
   if (data.surpriseType       !== undefined) surpriseSettings.type       = data.surpriseType;
   if (data.surpriseTarget     !== undefined) surpriseSettings.target     = data.surpriseTarget;
   if (data.surpriseMultiplier !== undefined) surpriseSettings.multiplier = Number(data.surpriseMultiplier) || 2;
-  if (data.surpriseDate !== undefined) {
-    const raw = String(data.surpriseDate).trim();
-    // If it's already YYYY-MM-DD, use it directly
-    if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
-      surpriseSettings.date = raw;
-    } else if (raw && raw !== 'undefined') {
-      // It's a full date string from Sheets — parse it but use LOCAL date parts
-      // to avoid timezone shifting the date
-      const d = new Date(raw);
-      if (!isNaN(d.getTime())) {
-        // Use UTC date parts since Sheets stores midnight UTC
-        const yyyy = d.getUTCFullYear();
-        const mm   = String(d.getUTCMonth() + 1).padStart(2, '0');
-        const dd   = String(d.getUTCDate()).padStart(2, '0');
-        surpriseSettings.date = `${yyyy}-${mm}-${dd}`;
-      } else {
-        surpriseSettings.date = raw;
-      }
-    }
-  }
+  // surpriseDate is NOT loaded from Sheets — it lives in localStorage only
   console.log('[Surprise] surpriseSettings after load:', JSON.stringify(surpriseSettings));
+  console.log('[Surprise] localStorage date:', getSurpriseDateLocal(), '| today:', todayStr());
 }
 
 async function saveScreenTimeLock() {
@@ -1269,12 +1251,11 @@ async function saveScreenTimeLock() {
     lockCategory: lockSettings.category,
     lockStart:    lockSettings.startTime,
     lockEnd:      lockSettings.endTime,
-    // preserve surprise settings
     surpriseEnabled:    surpriseSettings.enabled,
     surpriseType:       surpriseSettings.type,
     surpriseTarget:     surpriseSettings.target,
-    surpriseMultiplier: surpriseSettings.multiplier,
-    surpriseDate:       surpriseSettings.date
+    surpriseMultiplier: surpriseSettings.multiplier
+    // surpriseDate intentionally NOT sent to Sheets
   });
 
   showToast('🔒', 'Lock Saved!', 'Screen time rules updated');
@@ -1301,10 +1282,10 @@ function populateLockUI() {
 // ─── DAILY SURPRISE ───────────────────────────────────────────────────────────
 let surpriseSettings = {
   enabled:    false,
-  type:       'activity', // 'activity' or 'category'
-  target:     '',         // activity id or category name
+  type:       'activity',
+  target:     '',
   multiplier: 2,
-  date:       ''          // YYYY-MM-DD — auto-expires at midnight
+  date:       ''  // stored in localStorage only, never in Sheets
 };
 
 function todayStr() {
@@ -1312,15 +1293,19 @@ function todayStr() {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 
+// The date the surprise was set is stored in localStorage — no Sheets timezone issues ever
+function getSurpriseDateLocal()       { return localStorage.getItem('ww_surpriseDate') || ''; }
+function setSurpriseDateLocal(date)   { localStorage.setItem('ww_surpriseDate', date); }
+
 function isSurpriseActive() {
-  const today = todayStr();
-  const active = surpriseSettings.enabled && !!surpriseSettings.target && surpriseSettings.date === today;
+  const today      = todayStr();
+  const savedDate  = getSurpriseDateLocal();
+  const active     = surpriseSettings.enabled && !!surpriseSettings.target && savedDate === today;
   console.log('[Surprise] isSurpriseActive:', active, {
     enabled: surpriseSettings.enabled,
     target:  surpriseSettings.target,
-    date:    surpriseSettings.date,
-    today:   today,
-    match:   surpriseSettings.date === today
+    savedDate, today,
+    match:   savedDate === today
   });
   return active;
 }
@@ -1406,14 +1391,14 @@ function populateSurpriseUI() {
 }
 
 async function saveDailySurprise() {
-  // Read target and multiplier from DOM, but use the state variable for enabled
   const target = document.getElementById('surpriseTarget').value;
   const multi  = parseFloat(document.getElementById('surpriseMultiplier').value) || 2;
 
-  // surpriseSettings.enabled was already updated by toggleSurpriseEnabled()
   surpriseSettings.target     = target;
   surpriseSettings.multiplier = multi;
-  surpriseSettings.date       = todayStr(); // stamp today so it shows up
+
+  // Store today's date in localStorage — bypasses all Sheets timezone/format issues
+  setSurpriseDateLocal(todayStr());
 
   await sheetsPost({
     action:             'saveSettings',
@@ -1424,8 +1409,8 @@ async function saveDailySurprise() {
     surpriseEnabled:    surpriseSettings.enabled,
     surpriseType:       surpriseSettings.type,
     surpriseTarget:     target,
-    surpriseMultiplier: multi,
-    surpriseDate:       surpriseSettings.date
+    surpriseMultiplier: multi
+    // surpriseDate intentionally NOT sent to Sheets
   });
 
   showToast('✨', 'Surprise Set!', `${multi}x bucks active today!`);
