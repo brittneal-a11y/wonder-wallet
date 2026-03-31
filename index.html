@@ -1234,7 +1234,16 @@ async function loadSettingsFromSheets() {
   if (data.surpriseType       !== undefined) surpriseSettings.type       = data.surpriseType;
   if (data.surpriseTarget     !== undefined) surpriseSettings.target     = data.surpriseTarget;
   if (data.surpriseMultiplier !== undefined) surpriseSettings.multiplier = Number(data.surpriseMultiplier) || 2;
-  if (data.surpriseDate       !== undefined) surpriseSettings.date       = data.surpriseDate;
+  if (data.surpriseDate       !== undefined) {
+    // Normalize to YYYY-MM-DD regardless of how Sheets stored it
+    const raw = String(data.surpriseDate);
+    const parsed = new Date(raw);
+    if (!isNaN(parsed.getTime())) {
+      surpriseSettings.date = `${parsed.getFullYear()}-${String(parsed.getMonth()+1).padStart(2,'0')}-${String(parsed.getDate()).padStart(2,'0')}`;
+    } else {
+      surpriseSettings.date = raw; // already a plain string, use as-is
+    }
+  }
   console.log('[Surprise] surpriseSettings after load:', JSON.stringify(surpriseSettings));
 }
 
