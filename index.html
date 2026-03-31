@@ -1522,16 +1522,17 @@ async function selectKid(name) {
   document.getElementById('greetingAvatar').src = avatarSrc;
   document.getElementById('greetingAvatar').alt = name;
   navigate('home');
+
   if (GOOGLE_SHEET_URL) {
-    const [kidData] = await Promise.all([
-      sheetsGet({ action: 'getKidData', child: name }),
-      loadSettingsFromSheets()
-    ]);
+    // Load settings FIRST so surprise card has correct data when it renders
+    await loadSettingsFromSheets();
+    const kidData = await sheetsGet({ action: 'getKidData', child: name });
     if (kidData) {
       appData.kids[name].balance = kidData.balance;
       appData.kids[name].transactions = kidData.transactions;
     }
   }
+
   updateBalancePreview();
   renderSurpriseCard();
 }
