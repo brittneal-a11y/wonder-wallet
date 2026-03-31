@@ -1224,17 +1224,18 @@ function formatTime12(hhmm) {
 
 async function loadSettingsFromSheets() {
   const data = await sheetsGet({ action: 'getSettings' });
+  console.log('[Surprise] loadSettingsFromSheets raw response:', data);
   if (!data) return;
   if (data.lockEnabled  !== undefined) lockSettings.enabled   = data.lockEnabled;
   if (data.lockCategory !== undefined) lockSettings.category  = data.lockCategory;
   if (data.lockStart    !== undefined) lockSettings.startTime = data.lockStart;
   if (data.lockEnd      !== undefined) lockSettings.endTime   = data.lockEnd;
-  // surprise settings
   if (data.surpriseEnabled    !== undefined) surpriseSettings.enabled    = data.surpriseEnabled;
   if (data.surpriseType       !== undefined) surpriseSettings.type       = data.surpriseType;
   if (data.surpriseTarget     !== undefined) surpriseSettings.target     = data.surpriseTarget;
   if (data.surpriseMultiplier !== undefined) surpriseSettings.multiplier = Number(data.surpriseMultiplier) || 2;
   if (data.surpriseDate       !== undefined) surpriseSettings.date       = data.surpriseDate;
+  console.log('[Surprise] surpriseSettings after load:', JSON.stringify(surpriseSettings));
 }
 
 async function saveScreenTimeLock() {
@@ -1293,17 +1294,28 @@ function todayStr() {
 }
 
 function isSurpriseActive() {
-  return surpriseSettings.enabled && surpriseSettings.target && surpriseSettings.date === todayStr();
+  const today = todayStr();
+  const active = surpriseSettings.enabled && !!surpriseSettings.target && surpriseSettings.date === today;
+  console.log('[Surprise] isSurpriseActive:', active, {
+    enabled: surpriseSettings.enabled,
+    target:  surpriseSettings.target,
+    date:    surpriseSettings.date,
+    today:   today,
+    match:   surpriseSettings.date === today
+  });
+  return active;
 }
 
 function getSurpriseActivities() {
-  // Returns array of earn activities that are boosted today
   if (!isSurpriseActive()) return [];
   if (surpriseSettings.type === 'activity') {
     const act = appData.earnActivities.find(a => a.id === surpriseSettings.target);
+    console.log('[Surprise] getSurpriseActivities activity:', act);
     return act ? [act] : [];
   } else {
-    return appData.earnActivities.filter(a => (a.category || 'Other') === surpriseSettings.target);
+    const acts = appData.earnActivities.filter(a => (a.category || 'Other') === surpriseSettings.target);
+    console.log('[Surprise] getSurpriseActivities category acts:', acts.length);
+    return acts;
   }
 }
 
