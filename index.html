@@ -1619,27 +1619,47 @@ function buildCategoryHTML(type) {
       const valuePrefix = type === 'earn' ? '+' : '-';
       const hasDesc = act.description && act.description.trim();
 
+      // Check if this activity gets a surprise bonus
+      const isBoosted = type === 'earn'
+        && isSurpriseActive()
+        && surpriseSettings.type === 'category'
+        && cat === surpriseSettings.target;
+      const displayValue = isBoosted ? Math.round(act.value * surpriseSettings.multiplier) : act.value;
+
       const lockNotice = catLocked
         ? `<div class="lock-notice">🕒 Available before ${formatTime12(lockSettings.startTime)} & after ${formatTime12(lockSettings.endTime)}</div>`
         : '';
 
-      const qtyOrDesc = act.allowQty
-        ? `<span class="qty-badge">× quantity · ${act.value} bucks/${act.unitLabel || 'unit'}</span>`
-        : (hasDesc ? '' : '');
+      const bonusBadge = isBoosted
+        ? `<span class="qty-badge" style="background:rgba(255,209,102,0.25);color:var(--yellow-dark);">✨ ${surpriseSettings.multiplier}x TODAY</span>`
+        : '';
 
-      const expandContent = !catLocked && (hasDesc || act.allowQty) ? `
+      const valueDisplay = isBoosted
+        ? `<div style="text-align:right;">
+             <div style="font-family:var(--font-display);font-size:13px;color:#bbb;text-decoration:line-through;">${valuePrefix}${act.value}</div>
+             <div class="act-value ${valueColor}">${valuePrefix}${displayValue}</div>
+           </div>`
+        : `<span class="act-value ${valueColor}">${valuePrefix}${act.value}</span>`;
+
+      const qtyOrDesc = act.allowQty
+        ? `<span class="qty-badge">× quantity · ${displayValue} bucks/${act.unitLabel || 'unit'}</span>`
+        : (hasDesc || isBoosted ? '' : '');
+
+      const confirmLabel = isBoosted ? `Confirm! ✨ +${displayValue}` : `Confirm! ${type === 'earn' ? '⭐' : '🎉'}`;
+
+      const expandContent = !catLocked && (hasDesc || act.allowQty || isBoosted) ? `
         <div class="act-expand">
           ${hasDesc ? `<div class="act-desc-text">${act.description}</div>` : ''}
           ${act.allowQty
             ? `<button class="act-confirm-btn ${type}-confirm" onclick="event.stopPropagation();handleTap('${type}','${act.id}')">Choose quantity →</button>`
             : (canAfford
-                ? `<button class="act-confirm-btn ${type}-confirm" onclick="event.stopPropagation();doDirectActivity('${type}','${act.id}')">Confirm! ${type === 'earn' ? '⭐' : '🎉'}</button>`
+                ? `<button class="act-confirm-btn ${type}-confirm" onclick="event.stopPropagation();doDirectActivity('${type}','${act.id}')">${confirmLabel}</button>`
                 : `<div style="font-size:12px;color:var(--coral);font-weight:800;margin-top:8px;">😢 Not enough bucks!</div>`)}
         </div>` : '';
 
       const tapAction = catLocked
         ? 'screenTimeLocked()'
-        : (hasDesc || act.allowQty)
+        : (hasDesc || act.allowQty || isBoosted)
           ? `toggleCard('${act.id}')`
           : (canAfford ? `doDirectActivity('${type}','${act.id}')` : 'insufficientFunds()');
 
@@ -1649,8 +1669,9 @@ function buildCategoryHTML(type) {
           <div class="act-body">
             <div class="act-top">
               <span class="act-name">${act.name}</span>
-              <span class="act-value ${valueColor}">${valuePrefix}${act.value}</span>
+              ${valueDisplay}
             </div>
+            ${bonusBadge}
             ${lockNotice}
             ${qtyOrDesc}
             ${expandContent}
@@ -1706,7 +1727,19 @@ function doDirectActivity(type, id) {
   const list = type === 'earn' ? appData.earnActivities : appData.spendActivities;
   const act  = list.find(a => a.id === id);
   if (!act) return;
-  doActivity(type, act, 1);
+
+  // Apply surprise multiplier if this activity's category is boosted today
+  const isBoosted = type === 'earn'
+    && isSurpriseActive()
+    && surpriseSettings.type === 'category'
+    && (act.category || 'Other') === surpriseSettings.target;
+
+  if (isBoosted) {
+    const boostedAct = { ...act, value: Math.round(act.value * surpriseSettings.multiplier), name: act.name + ' ✨' };
+    doActivity(type, boostedAct, 1);
+  } else {
+    doActivity(type, act, 1);
+  }
 }
 
 // ─── ACTIVITY TAP ─────────────────────────────────────────────────────────────
@@ -1714,8 +1747,21 @@ function handleTap(type, id) {
   const list = type === 'earn' ? appData.earnActivities : appData.spendActivities;
   const act  = list.find(a => a.id === id);
   if (!act) return;
-  if (act.allowQty) openQtyModal(type, act);
-  else doActivity(type, act, 1);
+
+  // Apply surprise multiplier for quantity activities in boosted category
+  const isBoosted = type === 'earn'
+    && isSurpriseActive()
+    && surpriseSettings.type === 'category'
+    && (act.category || 'Other') === surpriseSettings.target;
+
+  if (act.allowQty) {
+    const actToUse = isBoosted
+      ? { ...act, value: Math.round(act.value * surpriseSettings.multiplier), name: act.name + ' ✨' }
+      : act;
+    openQtyModal(type, actToUse);
+  } else {
+    doActivity(type, act, 1);
+  }
 }
 
 // ─── QUANTITY MODAL ───────────────────────────────────────────────────────────
