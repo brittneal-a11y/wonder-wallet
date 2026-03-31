@@ -1308,11 +1308,12 @@ function getSurpriseActivities() {
 }
 
 function toggleSurpriseEnabled() {
+  // Toggle the state variable directly — don't read from DOM
+  surpriseSettings.enabled = !surpriseSettings.enabled;
   const btn  = document.getElementById('surpriseToggle');
   const body = document.getElementById('surpriseBody');
-  const isOn = !btn.classList.contains('on');
-  btn.classList.toggle('on', isOn);
-  body.classList.toggle('hidden', !isOn);
+  btn.classList.toggle('on', surpriseSettings.enabled);
+  body.classList.toggle('hidden', !surpriseSettings.enabled);
 }
 
 function setSurpriseType(type) {
@@ -1356,31 +1357,32 @@ function pickRandom() {
     const idx  = Math.floor(Math.random() * cats.length);
     document.getElementById('surpriseTarget').value = cats[idx] || '';
   }
-  // little spin animation on the button
   const btn = document.querySelector('.dice-btn');
   btn.textContent = '🎲 Picked!';
   setTimeout(() => { btn.textContent = '🎲 Pick Random for Me!'; }, 1200);
 }
 
 function populateSurpriseUI() {
+  // Use surpriseSettings.enabled directly — don't check isSurpriseActive() here
+  // because we want the toggle to reflect what's saved, even if today's date
+  // doesn't match yet (i.e. you're setting it fresh today)
   const btn  = document.getElementById('surpriseToggle');
   const body = document.getElementById('surpriseBody');
-  const isActive = isSurpriseActive();
-  btn.classList.toggle('on', surpriseSettings.enabled && isActive);
-  body.classList.toggle('hidden', !(surpriseSettings.enabled));
+  btn.classList.toggle('on', surpriseSettings.enabled);
+  body.classList.toggle('hidden', !surpriseSettings.enabled);
   setSurpriseType(surpriseSettings.type);
   document.getElementById('surpriseMultiplier').value = surpriseSettings.multiplier;
 }
 
 async function saveDailySurprise() {
-  const isOn      = document.getElementById('surpriseToggle').classList.contains('on');
-  const target    = document.getElementById('surpriseTarget').value;
-  const multi     = parseFloat(document.getElementById('surpriseMultiplier').value) || 2;
+  // Read target and multiplier from DOM, but use the state variable for enabled
+  const target = document.getElementById('surpriseTarget').value;
+  const multi  = parseFloat(document.getElementById('surpriseMultiplier').value) || 2;
 
-  surpriseSettings.enabled    = isOn;
+  // surpriseSettings.enabled was already updated by toggleSurpriseEnabled()
   surpriseSettings.target     = target;
   surpriseSettings.multiplier = multi;
-  surpriseSettings.date       = todayStr();
+  surpriseSettings.date       = todayStr(); // stamp today so it shows up
 
   await sheetsPost({
     action:             'saveSettings',
@@ -1388,11 +1390,11 @@ async function saveDailySurprise() {
     lockCategory:       lockSettings.category,
     lockStart:          lockSettings.startTime,
     lockEnd:            lockSettings.endTime,
-    surpriseEnabled:    isOn,
+    surpriseEnabled:    surpriseSettings.enabled,
     surpriseType:       surpriseSettings.type,
     surpriseTarget:     target,
     surpriseMultiplier: multi,
-    surpriseDate:       todayStr()
+    surpriseDate:       surpriseSettings.date
   });
 
   showToast('✨', 'Surprise Set!', `${multi}x bucks active today!`);
